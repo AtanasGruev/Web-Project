@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="bg">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Escape FMI - Moodle Login </title>
+
+        <link rel="stylesheet" href="../css/moodle-styles.css">
+        <script defer src="../js/moodle-login-script.js"></script>
+    </head>
+    <body>
+        <div id="root">            
+            <main class="main">
+
+                <!-- Идея: на moodle мини-сайта се помещават две форми.
+                     Иска ми се с JS винаги едната да е видима.
+                     Първоначално ще е register формата примерно, после само другата
+                     след първоначалното регистриране, нещо такова. -->
+
+                
+                <!-- LOGIN: Веднъж регистриран, потребителят влиза с тази форма. 
+                     Default-ното състояние е да е видима, т.е. 
+                     document.getElementById("mlogin-form").display = "block";  -->
+
+                <form class="mlogin-form" id="mlogin-form" autocomplete="off">
+                    <img src="../misc/moodle-logo.png" alt="moodle-logo">
+
+                    <h1 class="mlogin-title"> Вход в <span style="font-weight: 600;">Moodle</span></h1>
+            
+                    <!-- Тука ясно -- пишем "Невалидно име или парола, моля опитайте отново." 
+                         Сложил съм някакъв CSS, подобен на moodle-овския. -->
+                    <div class="mlogin-errors" id="mlogin-errors"></div>
+            
+                    <!-- Потребителско име. -->
+                    <input class="mlogin-username" name="mlogin-username" type="text" placeholder="Потребителско име"/>
+                    
+                    <!-- Парола. -->
+                    <input class="mlogin-password" name="mlogin-password" type="password"  placeholder="Парола"/>
+
+                    <!-- Бутон за вход. -->
+                    <button type="submit" class="mlogin-button" id="mlogin-button">Вход</button>
+                </form>
+            </main>
+        </div>
+    </body>
+</html>
