@@ -5,12 +5,39 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title> Escape FMI </title>
 
-        <link rel="stylesheet" href="./styles.css">
-        <script defer src="script.js"></script>
+        <link rel="stylesheet" href="../css/styles.css">
+        <script defer src="../js/script.js"></script>
     </head>
     <body>
         <div id="root">
-            <iframe id="moodle-iframe" src="moodle-register.html" style="width: 34em; height: 28em;"></iframe>
+            <div id="narration"></div>
+
+            <div class="bars">
+                <div class="health">
+                    <h2 id="health-bar-info">Здраве</h2>
+                    <div class="health-bar">
+                        <div class="health-bar-real"></div>
+                    </div>
+                </div>
+
+                <div class="sleep">
+                    <h2 id="sleep-bar-info">Сън</h2>
+                    <div class="sleep-bar">
+                        <div class="sleep-bar-real"></div>
+                    </div>
+                </div>
+
+                <div class="fmi">
+                    <h2 id="fmi-bar-info">Успех</h2>
+                    <div class="fmi-bar">
+                        <div class="fmi-bar-real"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="moodle-container" class="moodle-container">
+                <iframe id="moodle-iframe" src="moodle-register.html" style="width: 34em; height: 34em;" scrolling="no"></iframe>
+            </div>
         </div>
     </body>
 </html>

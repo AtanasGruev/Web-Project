@@ -25,6 +25,7 @@ function registerUser(event) {
 
     // Ако възникнат проблеми с валидацията, <div> с id = mregister-errors
     var errorDiv = document.getElementById("mregister-errors");
+    errorDiv.style.display = "block";
     errorDiv.innerHTML = "";
     
     // Валидация на username -- ПОДЛЕЖИ НА ПРОМЯНА
@@ -51,7 +52,7 @@ function registerUser(event) {
     // На практика просто проверка дали двете пароли съвпадат.
     if(password.value !== passwordAgain.value) errorDiv.innerHTML += "Грешка при повторно въвеждане на паролата<br/>";
 
-    if(errorDiv.innerHTML !== "") {
+    if(errorDiv.innerHTML !== "") { 
         userName.value = "";
         emailAddress.value = "";
         password.value = "";

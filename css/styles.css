@@ -4,8 +4,73 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-iframe {
-    display:block;
-    margin-left: auto;
-    overflow: hidden;
+.moodle-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin-right: 2rem;
+    margin-bottom: 2rem;
+}
+
+#moodle-iframe {
+    display: block;
+    margin: auto;
+    border:none;
+}
+
+#narration {
+    width: 30%;
+    height: 90vh;
+    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}
+
+.bars {
+    box-sizing: border-box;
+    position: absolute;
+    right:0;
+    top: 0;
+    margin-right: 3rem;
+    margin-top: 3rem;
+}
+
+.bars .health,
+.bars .sleep,
+.bars .fmi {
+    display: flex;
+    flex-direction: row;
+    align-content: space-around;
+    justify-content: flex-end;
+}
+
+.bars .health-bar,
+.bars .sleep-bar,
+.bars .fmi-bar {
+    width: 24rem;
+    height: 1rem;
+    padding: 0.25rem;
+    margin-left: 1rem;
+    background: #DDDDDD;
+    border-radius: 0.5rem;
+    align-self: center;
+}
+
+.bars .health-bar-real {
+    background-color: red;
+}
+
+.bars .sleep-bar-real {
+    background-color: green;
+}
+
+.bars .fmi-bar-real {
+    background-color: blue;
+}
+
+.bars .health-bar-real,
+.bars .sleep-bar-real,
+.bars .fmi-bar-real {
+    width: 100%;
+    height: 1rem;
+    border-radius: 0.5rem;
 }

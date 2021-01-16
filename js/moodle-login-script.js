@@ -14,6 +14,7 @@ function loginUser(event) {
 
     // Ако възникнат проблеми с валидацията, <div> с id = mlogin-errors
     var errorDiv = document.getElementById("mlogin-errors");
+    errorDiv.style.display = "block";
     errorDiv.innerHTML = "";
 
     // [TODO]

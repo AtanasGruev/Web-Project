@@ -10,11 +10,19 @@ html,
 body {
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: flex-end;
+    align-items: flex-end;
 }
 
 #mlogin-errors,
 #mregister-errors {
+    display: none;
     background-color: #F6D9D8;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .mlogin-form,
