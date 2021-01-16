@@ -46,3 +46,5 @@ if ($row != false) {
 
 // CREATE USER 'register_user'@'localhost' IDENTIFIED BY 'passw0rd';
 // GRANT ALL ON webproj.users TO 'register_user'@'localhost';
+
+?>

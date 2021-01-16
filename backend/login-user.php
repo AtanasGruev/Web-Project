@@ -17,3 +17,5 @@ if ($row == false) {
 } else {
     echo "You signed in successfully.";
 }
+
+?>
