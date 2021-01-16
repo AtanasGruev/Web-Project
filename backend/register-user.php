@@ -12,18 +12,18 @@ $stmt->execute();
 $row = $stmt->fetch();
 
 if ($row != false) {
-    echo "a user with the email " . $row['email'] . " already exists <br>";
+    echo "Потребител с имейла " . $row['email'] . " вече съществува.";
 } else { $sql = "INSERT INTO users(username, email, password) VALUES (?,?,?);";
 
     $stmt = $conn->prepare($sql);
     $result = $stmt->execute([$username, $email, $hashed_password]);
 
     if ($result) {
-        echo 'You signed up successfully.';
+        echo 'Регистрирахте се успешно!';
     } else {
         $error = $stmt->errorInfo();
         if ($error[1] == 1062) {
-            echo 'username already exists';
+            echo 'Потребителското име е заето.';
         }
     }
 }

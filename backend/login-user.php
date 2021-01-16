@@ -13,9 +13,9 @@ $stmt->execute();
 
 $row = $stmt->fetch();
 if ($row == false) {
-    echo "Invalid username/password.<br>";
+    echo "Невалидно потребителско име/парола.";
 } else {
-    echo "You signed in successfully.";
+    echo "Вписахте се успешно!";
 }
 
 ?>

@@ -85,7 +85,7 @@ function ajax(url, settings) {
 
 var callback = function (text) {
 
-    if (text == "You signed up successfully.") {
+    if (text == "Регистрирахте се успешно!") {
         window.location = "../html/moodle-login.html";
     } else {
         var errorDiv = document.getElementById("mregister-errors");

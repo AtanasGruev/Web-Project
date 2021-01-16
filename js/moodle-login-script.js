@@ -48,7 +48,7 @@ function ajax(url, settings) {
 
 var callback = function (text) {
 
-    if (text == "You signed in successfully.") {
+    if (text == "Вписахте се успешно!") {
 
         //moodle-main или както сме кръстили мудъл страницата
         //window.location = "../html/moodle-main.html";
