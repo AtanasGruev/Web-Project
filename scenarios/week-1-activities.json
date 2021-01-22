@@ -1,0 +1,38 @@
+{
+    "общак": [
+        {
+            "event": "играй цс",
+            "statsChange": {
+                "fun": 1,
+                "health": -0.5,
+                "uni": -0.5
+            }
+        },
+        {
+            "event": "учи",
+            "statsChange": {
+                "fun": -1,
+                "health": 0,
+                "uni": 1
+            }
+        }
+    ],
+    "ФМИ": [
+        {
+            "event": "посети лекция",
+            "statsChange": {
+                "fun": -1,
+                "health": 0,
+                "uni": 1
+            }
+        },
+        {
+            "event": "стой в зала 100",
+            "statsChange": {
+                "fun": 1,
+                "health": 0,
+                "uni": -1
+            }
+        }
+    ]
+}
