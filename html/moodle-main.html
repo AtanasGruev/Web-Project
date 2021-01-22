@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="bg">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Escape FMI - Moodle Subpage </title>
+
+        <link rel="stylesheet" href="../css/moodle-main-styles.css">
+        <script defer src="../js/moodle-main-script.js"></script>
+    </head>
+    <body>
+        <div id="root">  
+            <img id="moodle-img" src="../misc/moodle-logo.png" alt="moodle-logo">           
+            <h1 class="statistics-font"> Вашите статистики: </h1>
+
+            <!-- Променя се динамично с JS -->
+            <div class="week-notification"> </div>
+
+            <div class="bars">
+                <div class="health">
+                    <h3 id="health-bar-info" class="statistics-font">Здраве:</h3>
+                    <div class="health-bar">
+                        <div class="health-bar-real"></div>
+                    </div>
+                </div>
+
+                <div class="sleep">
+                    <h3 id="sleep-bar-info" class="statistics-font">Соц.живот:</h3>
+                    <div class="sleep-bar">
+                        <div class="sleep-bar-real"></div>
+                    </div>
+                </div>
+
+                <div class="fmi">
+                    <h3 id="fmi-bar-info" class="statistics-font">Успехи:</h3>
+                    <div class="fmi-bar">
+                        <div class="fmi-bar-real"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Идеята е да има най-различни:
+                    - места, които се изследват;
+                    - изненади, които могат да се случат;
+                    - запознанства, които могат да се завържат; -->
+            <div class="occurrences">
+                <div class="visited-places-info">
+                    <h3 id="visited-places" class="statistics-font"> Посетени локации: </h3>
+                    <!-- Това се променя с JS (трябва да се измисли бройката). --> 
+                    <p id="visited-places-cnt"></p>  
+                </div>
+                <div class="surprises-info">
+                    <h3 id="surprises" class="statistics-font"> Настъпили изненади: </h3>
+                    <!-- Това се променя с JS (трябва да се измисли бройката). --> 
+                    <p id="surprises-cnt"></p>  
+                </div>
+                <div class="relationships-info">
+                    <h3 id="relationships" class="statistics-font"> Приятелства и връзки: </h3>
+                    <!-- Това се променя с JS (трябва да се измисли бройката). --> 
+                    <p id="relationships-cnt"></p>  
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

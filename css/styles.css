@@ -1,3 +1,8 @@
+body.active {
+    background-color: #09071E;
+    color: #FDD835;
+}
+
 #root {
     margin-left: 2.5%;
     margin-right: 2.5%;
@@ -25,52 +30,72 @@
     mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
 
-.bars {
-    box-sizing: border-box;
-    position: absolute;
-    right:0;
-    top: 0;
-    margin-right: 3rem;
-    margin-top: 3rem;
-}
-
-.bars .health,
-.bars .sleep,
-.bars .fmi {
+#toggle-mode {
     display: flex;
-    flex-direction: row;
-    align-content: space-around;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-right: 5rem;
+    margin-top: 5rem;
 }
 
-.bars .health-bar,
-.bars .sleep-bar,
-.bars .fmi-bar {
-    width: 24rem;
-    height: 1rem;
-    padding: 0.25rem;
-    margin-left: 1rem;
-    background: #DDDDDD;
-    border-radius: 0.5rem;
-    align-self: center;
+#toggle-day-night{
+    appearance: none;
+    outline: none;
+    position: relative;
+    width: 200px;
+    height:100px;
+    background-image: url("../misc/sunshine.png");
+    background-size: cover;
+    border-radius: 50px;
+    transition: background-image .9s;
+    box-shadow: 0 2px 5px 1px gray;
 }
 
-.bars .health-bar-real {
-    background-color: red;
+
+#toggle-day-night:before {
+    content: "";
+    width: 100px;
+    height: 100px;
+    background-color: #f4bd21;
+    border-radius:50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all .9s;
+    background-color: #4090d6;
 }
 
-.bars .sleep-bar-real {
-    background-color: green;
+#toggle-day-night:checked {
+    background-image: url("../misc/night.jpg"); 
 }
 
-.bars .fmi-bar-real {
-    background-color: blue;
+#toggle-day-night:checked:before {
+    transform: translate(100%);
+    background-color: #FDD835;
 }
 
-.bars .health-bar-real,
-.bars .sleep-bar-real,
-.bars .fmi-bar-real {
-    width: 100%;
-    height: 1rem;
-    border-radius: 0.5rem;
+.actions h2 {
+    position:absolute;
+    top: 13rem;
+    right: 4rem;
+}
+
+#week-actions {
+    display:flex;
+    gap: 4px;
+
+    position:absolute;
+    top: 18rem;
+    right: 4rem;
+}
+
+#week-actions div {
+    border:1px solid black;
+    width: 2.7rem;
+    height:8px;
+    border-radius: 40px;
+    background-color: #39d078;
 }

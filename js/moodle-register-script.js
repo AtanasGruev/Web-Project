@@ -88,6 +88,7 @@ var callback = function (text) {
     if (text == "Регистрирахте се успешно!") {
         window.location = "../html/moodle-login.html";
     } else {
+        console.log("Value of text is" + text);
         var errorDiv = document.getElementById("mregister-errors");
         const userName = document.querySelector("[name=mregister-username]");
         const emailAddress = document.querySelector("[name=mregister-email]");

@@ -80,6 +80,15 @@ body {
     box-shadow: 0 1px 0 0 #F98012;
 }
 
+.mregister-form #mlogin-page {
+    font-size: 1rem;
+    align-self: flex-end;
+    color: #4154E0;
+    text-decoration: none;
+    margin: 0.75rem 0.25rem;
+    margin-bottom: 1rem;
+}
+
 .mlogin-button,
 .mregister-button {
     background-color: #1177D1;

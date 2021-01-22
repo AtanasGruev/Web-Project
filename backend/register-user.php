@@ -4,7 +4,7 @@ $username = isset($_POST['username']) ? $_POST['username'] : '';
 $password = isset($_POST['password']) ? $_POST['password'] : '';
 $hashed_password = sha1($password);
 
-$conn = new PDO('mysql:host=localhost;dbname=webproj', 'register_user', 'passw0rd');
+$conn = new PDO('mysql:host=localhost; port=3306; dbname=webproj', 'register_user', 'passw0rd');
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
 $stmt->bindParam(':email', $email, PDO::PARAM_STR);
@@ -14,7 +14,6 @@ $row = $stmt->fetch();
 if ($row != false) {
     echo "Потребител с имейла " . $row['email'] . " вече съществува.";
 } else { $sql = "INSERT INTO users(username, email, password) VALUES (?,?,?);";
-
     $stmt = $conn->prepare($sql);
     $result = $stmt->execute([$username, $email, $hashed_password]);
 
@@ -29,22 +28,16 @@ if ($row != false) {
 }
 
 // CREATE DATABASE webproj
-
 // CHARACTER SET="utf8";
-
 // USE webproj;
 
 // CREATE TABLE users (
-
 // id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
 // username VARCHAR(150) NOT NULL UNIQUE,
-
 // password VARCHAR(200) NOT NULL,
-
+// email VARCHAR(200) NOT NULL UNIQUE
 // );
 
 // CREATE USER 'register_user'@'localhost' IDENTIFIED BY 'passw0rd';
 // GRANT ALL ON webproj.users TO 'register_user'@'localhost';
-
 ?>

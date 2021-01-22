@@ -51,10 +51,11 @@ var callback = function (text) {
     if (text == "Вписахте се успешно!") {
 
         //moodle-main или както сме кръстили мудъл страницата
-        //window.location = "../html/moodle-main.html";
+        window.location = "../html/moodle-main.html";
+
         //засега просто принтва съобщението
-        var errorDiv = document.getElementById("mlogin-errors");
-        errorDiv.innerHTML += text;
+        // var errorDiv = document.getElementById("mlogin-errors");
+        // errorDiv.innerHTML += text;
 
     } else {
         //ако името/паролата са невалидни, изтрива полетата и принтва съобщението
@@ -62,6 +63,8 @@ var callback = function (text) {
         const userName = document.querySelector("[name=mregister-username]");
         const password = document.querySelector("[name=mregister-password]");
 
+        // ВЪЗНИКВА ГРЕШКА ПРИ ОПИТ ЗА ЛОГИН!
+        // ДА СЕ КОМЕНТИРА С ЛЮБО?
         errorDiv.innerHTML += text;
         userName.value = "";
         password.value = "";

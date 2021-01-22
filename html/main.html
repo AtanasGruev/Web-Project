@@ -10,33 +10,35 @@
     </head>
     <body>
         <div id="root">
+            <!-- Поле с текстови данни-->
             <div id="narration"></div>
 
-            <div class="bars">
-                <div class="health">
-                    <h2 id="health-bar-info">Здраве</h2>
-                    <div class="health-bar">
-                        <div class="health-bar-real"></div>
-                    </div>
-                </div>
+            <!-- Възможност за light / dark theme -->
+            <div id="toggle-mode">
+                <input id="toggle-day-night" type="checkbox">
+            </div>
 
-                <div class="sleep">
-                    <h2 id="sleep-bar-info">Сън</h2>
-                    <div class="sleep-bar">
-                        <div class="sleep-bar-real"></div>
-                    </div>
-                </div>
-
-                <div class="fmi">
-                    <h2 id="fmi-bar-info">Успех</h2>
-                    <div class="fmi-bar">
-                        <div class="fmi-bar-real"></div>
-                    </div>
-                </div>
+            <div class="actions">
+                <h2> Хроника на действията през седмицата: </h2>
+            </div>
+            <div id="week-actions">
+                <div id="action-0" class="week-actions-div"></div>
+                <div id="action-1" class="week-actions-div"></div>
+                <div id="action-2" class="week-actions-div"></div>
+                <div id="action-3" class="week-actions-div"></div>
+                <div id="action-4" class="week-actions-div"></div>
+                <div id="action-5" class="week-actions-div"></div>
+                <div id="action-6" class="week-actions-div"></div>
+                <div id="action-7" class="week-actions-div"></div>
+                <div id="action-8" class="week-actions-div"></div>
+                <div id="action-9" class="week-actions-div"></div>
+            </div>
+            <div class="btn-actions">
+                <button type="submit" id="btn-actions">Вход</button>
             </div>
 
             <div id="moodle-container" class="moodle-container">
-                <iframe id="moodle-iframe" src="moodle-register.html" style="width: 34em; height: 34em;" scrolling="no"></iframe>
+                <iframe id="moodle-iframe" src="moodle-register.html" style="width: 34em; height: 36.5em;" scrolling="no"></iframe>
             </div>
         </div>
     </body>
