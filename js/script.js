@@ -1,8 +1,44 @@
-var narrationField = document.getElementById("narration");
-var messageQueue = [];
-var message = "A semester begins at FMI!"
+const openModalButtons = document.querySelectorAll('[data-modal-target]')
+const closeModalButtons = document.querySelectorAll('[data-close-button]')
+const overlay = document.getElementById('overlay')
+   
+openModalButtons.forEach(button => {
+    button.addEventListener('click', () => {
+    const modal = document.querySelector(button.dataset.modalTarget)
+    openModal(modal)
+    })
+})
+
+overlay.addEventListener('click', () => {
+    const modals = document.querySelectorAll('.modal.active')
+    modals.forEach(modal => {
+    closeModal(modal)
+    })
+})
+
+closeModalButtons.forEach(button => {
+    button.addEventListener('click', () => {
+    const modal = button.closest('.modal')
+    closeModal(modal)
+    })
+})
+
+function openModal(modal) {
+    if (modal == null) return
+    modal.classList.add('active')
+    overlay.classList.add('active')
+}
+
+function closeModal(modal) {
+    if (modal == null) return
+    modal.classList.remove('active')
+    overlay.classList.remove('active')
+}
 
 function printMessage(message) {
+    var narrationField = document.getElementById("narration");
+    var messageQueue = [];
+
     messageQueue.push(message);
     if (messageQueue.length == 20) {
         messageQueue.shift();
@@ -34,9 +70,18 @@ function incrementActions(counterActionsObj) {
     }
 }
 
+function parseWeeks() {
+    fetch("../scenarios/week-0.json")
+    .then(data => data.json())
+    .then(result => console.log(result))
+}
+
 (function(){
+    // Да се направи на отделна функция, а IIFE да служи за main()
+
     var toggleMode = document.getElementById("toggle-day-night");
     var counterToggle = 0;
+
     toggleMode.onclick = () => {
         document.querySelector("body").classList.toggle("active");
         console.log(counterToggle);
@@ -44,8 +89,9 @@ function incrementActions(counterActionsObj) {
             // Добавяме рамка в night mode
             var iframeVar = document.getElementById("moodle-iframe").contentWindow;
             var moodleRoot = iframeVar.document.getElementById("root");
-            moodleRoot.style.border = "4px solid #FDD835";
-            moodleRoot.style.borderRadius = "2rem";
+            
+            moodleRoot.style.border = "2px solid #FDD835";
+            moodleRoot.style.borderRadius = "0.5rem";
 
             var currAddress = iframeVar.location.href;
             var targetAddress = currAddress.substring(0, currAddress.lastIndexOf('/'));
@@ -59,7 +105,8 @@ function incrementActions(counterActionsObj) {
             // При последващ toggle, махаме рамката
             var iframeVar = document.getElementById("moodle-iframe").contentWindow;
             var moodleRoot = iframeVar.document.getElementById("root");
-            moodleRoot.style.border = "none";
+            
+            moodleRoot.style.border = "2px solid black";
             moodleRoot.style.color = "black";
             
             var currAddress = iframeVar.location.href;
@@ -73,13 +120,9 @@ function incrementActions(counterActionsObj) {
         counterToggle++;
     }
 
-    var counterActionsObj = {counterActions : 0, flag: true};
-    var actionBtn = document.getElementById("btn-actions");
-    actionBtn.addEventListener("click", function() {
-        incrementActions(counterActionsObj)
-    });
+    parseWeeks();
 
-
-    setInterval(printMessage, 500, message);
+    //var message = "A semester begins at FMI!"
+    //setInterval(printMessage, 500, message);
     // setTimeout(printMessage, 5000, message);
 })();
