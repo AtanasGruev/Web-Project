@@ -1,3 +1,6 @@
+// Евентуално при refactoring трябва да докараме тук глобалните променливи...
+var narrationQueue = [];
+
 //const openModalButtons = document.querySelectorAll('[data-modal-target]')
 const closeModalButtons = document.querySelectorAll('[data-close-button]');
 const overlay = document.getElementById('overlay');
@@ -51,32 +54,30 @@ function closeModal(modal) {
 
 function printMessage(message) {
     var narrationField = document.getElementById("narration");
-    var messageQueue = [];
+    
+    var messageDiv = document.createElement("div");
+    messageDiv.innerHTML = message;
 
-    messageQueue.push(message);
-    if (messageQueue.length == 20) {
-        messageQueue.shift();
-    } else {
-        narrationField.innerHTML += message;
-        narrationField.innerHTML += "<br/><br/>"
+    narrationQueue.push(message);
+    narrationField.appendChild(messageDiv);
+    if (narrationQueue.length == 15) {
+        narrationField.lastElementChild().remove();
     }
 }
 
 function incrementActions(counterActionsObj) {
     if (counterActionsObj["counterActions"] % 10 == 0 && counterActionsObj["flag"] == false) {
-        console.log("NOW");
         var divsActions = document.getElementsByClassName("week-actions-div");
         for (var i = 0; i < divsActions.length; i += 1) {
-            divsActions[i].style.backgroundColor = "#39d078";
+            divsActions[i].style.backgroundColor = "#39D078";
             divsActions[i].style.boxShadow = "none";
         }
         counterActionsObj["flag"] = true;
     } else if (counterActionsObj["flag"]) {
         var currAction = document.getElementById("action-" + (counterActionsObj["counterActions"]) % 10);
-        currAction.style.backgroundColor = "blue";
-        currAction.style.boxShadow = "0 0 5px red";
+        currAction.style.backgroundColor = "#007CFF";
+        currAction.style.boxShadow = "0 0 10px #39D078";
         counterActionsObj["counterActions"]++;
-        console.log(counterActionsObj["counterActions"]);
 
         if (counterActionsObj["counterActions"] % 10 == 0) {
             counterActionsObj["flag"] = false;
@@ -120,7 +121,7 @@ function callback(result) {
     // Слагаме eventListener на бутона, като се цъкне, closeModal() и скачаме на следващия modal
     optButton.addEventListener('click', () => {
         closeModal(modalOnLoad); // константата от горе, той си е един
-        // Други действия
+        return;
     })
 
     // За CSS-а на бутоните съм написал настройки в css-файла
@@ -137,6 +138,76 @@ function callback(result) {
     //и втората половина е вече тази в която имаме опциите дето трябва да избираш
 
     
+}
+
+function parseWeek1(result) {
+    fetch("../scenarios/week-1-activities.json")
+        .then(data => data.json())
+        .then(result => activitiesWeek1(result))
+        //.then(result => notificationsWeek1(result))
+}
+
+function activitiesWeek1(result) {
+    // Трябва да е във fetch(), иначе поначало е видима...
+    document.getElementById("toggle-mode").style.visibility = "visible";
+    document.getElementsByClassName("actions")[0].style.visibility = "visible";
+
+    for (let location in result) {
+        var locationsDiv = document.getElementById("week-locations");
+        var locButton = document.createElement("button");
+        locButton.setAttribute("class", "week-locations-button");
+        locButton.innerHTML = location;
+        locationsDiv.appendChild(locButton); 
+
+        locButton.addEventListener('click', function(event) {
+            locationButtonClicked(event, location);
+        })
+
+        var actionsDiv = document.getElementById("week-activities");
+        for (let i = 0; i < result[location].length; i++) {
+            var actButton = document.createElement("button");
+            actButton.setAttribute("class", "week-activities-button");
+            actButton.setAttribute("name", location);
+            actButton.style.display = "none";
+            actButton.innerHTML = result[location][i]["event"];
+            actionsDiv.appendChild(actButton);
+
+            actButton.addEventListener('click', function(event) {
+                var action = result[location][i];
+                actionButtonClicked(event, action); // предстои да се имплементира
+            })
+        }
+    }
+}
+
+function locationButtonClicked(event, location) {
+    var weekLocations = document.getElementsByClassName("week-locations-button");
+    weekLocations = [...weekLocations];
+
+    // Премахваме ефектите на всички други локации
+    weekLocations.forEach(element => {
+        element.style.textDecoration = "none";
+    })
+
+    // Ефект само на конкретната локация
+    event.currentTarget.style.textDecoration = "underline";
+
+    // Бутоните на другите локации не се виждат
+    allButtons = document.getElementsByClassName("week-activities-button");
+    allButtons = [...allButtons];
+    for (let b in allButtons) {
+        allButtons[b].style.display = "none";
+    }
+
+    appropriateButtons = document.getElementsByName(location);
+    appropriateButtons = [...appropriateButtons];
+    for (let b in appropriateButtons) {
+        appropriateButtons[b].style.display = "block";
+    }
+}
+
+function actionButtonClicked(event, action) {
+    // Предстои да се имплементира
 }
 
 
@@ -186,12 +257,16 @@ function callback(result) {
 
 
     var counterActionsObj = {counterActions : 0, flag: true};
-    var actionBtn = document.getElementById("btn-actions");
+    // Вместо това - всеки бутон за действие ще вика тази функция incrementActions()
+
+    /* var actionBtn = document.getElementById("btn-actions");
     actionBtn.addEventListener("click", function() {
         incrementActions(counterActionsObj)
-    });
+    }); */
 
 
     parseWeeks();
+    parseWeek1();
 
+    printMessage("A semester begins at FMI!");
 })();

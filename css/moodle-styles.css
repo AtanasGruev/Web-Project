@@ -17,6 +17,11 @@ body {
     align-items: flex-end;
 }
 
+#root {
+    border: 2px solid black;
+    border-radius: 0.5rem;
+}
+
 #mlogin-errors,
 #mregister-errors {
     display: none;
@@ -28,7 +33,6 @@ body {
 
 .mlogin-form,
 .mregister-form {
-    border: 2px solid black;
     border-radius: 0.5rem;
 
     background-color: #FFFFFF;

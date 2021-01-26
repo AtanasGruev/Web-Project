@@ -12,63 +12,68 @@
 
 <body>
     <div id="root">
-        <!-- Поле с текстови данни-->
-        <div id="narration"></div>
-
-        <!-- Възможност за light / dark theme -->
-        <div id="toggle-mode">
-            <input id="toggle-day-night" type="checkbox">
+        <!-- ЛЯВА ЧАСТ ОТ ЕКРАНА -->
+        <div id="left-wrapper">
+            <!-- Поле с текстови данни-->
+            <div id="narration"></div>
         </div>
 
-        <!-- Modals & Popups -- Week 0 -->
-        <!-- <button data-modal-target="#modal">Open Modal</button> -->
-        <div class="modal" id="modal">
-            <div class="modal-header">
-                <div id="modal-title" class="title">Example Modal</div>
-                <!-- <button data-close-button class="close-button">&times;</button> -->
+        <!-- ЦЕНТРАЛНА ЧАСТ ОТ ЕКРАНА -->
+        <div id="central-wrapper">
+            <!-- Modals & Popups -- Week 0 -->
+            <!-- <button data-modal-target="#modal">Open Modal</button> -->
+            <div class="modal" id="modal">
+                <div class="modal-header">
+                    <div id="modal-title" class="title"></div>
+                    <!-- <button data-close-button class="close-button">&times;</button> -->
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <!-- Тук разполагаме бутоните, отговарящи на реакциите. -->
+                    <!-- Това се прави от JS като четем от JSON файла. -->
+                </div>
             </div>
-            <div class="modal-body">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse quod alias ut illo doloremque eum ipsum
-                obcaecati distinctio debitis reiciendis quae quia soluta totam doloribus quos nesciunt necessitatibus,
-                consectetur quisquam accusamus ex, dolorum, dicta vel? Nostrum voluptatem totam, molestiae rem at ad
-                autem dolor ex aperiam. Amet assumenda eos architecto, dolor placeat deserunt voluptatibus tenetur sint
-                officiis perferendis atque! Voluptatem maxime eius eum dolorem dolor exercitationem quis iusto totam!
-                Repudiandae nobis nesciunt sequi iure! Eligendi, eius libero. Ex, repellat sapiente!
+            <div id="overlay"></div>
+
+            <div id="locations-actions">
+                <!-- Тук разполагаме контейнер за локациите -->
+                <div id="week-locations" class="week-locations"></div>
+
+                <!-- Тук разполагаме контейнер -- бутони с действия -->
+                <div id="week-activities" class="week-activites"></div>
             </div>
-            <div class="modal-footer">
-                <!-- Тук разполагаме бутоните, отговарящи на реакциите. -->
-                <!-- Това се прави от JS като четем от JSON файла. -->
+
+            <div class="actions">
+                <h2> Хроника на действията през седмицата: </h2>
+                <!-- <button type="submit" id="btn-actions" style="margin-bottom: 2rem;">Вход</button> -->
+
+                <div id="week-actions">
+                    <div id="action-0" class="week-actions-div"></div>
+                    <div id="action-1" class="week-actions-div"></div>
+                    <div id="action-2" class="week-actions-div"></div>
+                    <div id="action-3" class="week-actions-div"></div>
+                    <div id="action-4" class="week-actions-div"></div>
+                    <div id="action-5" class="week-actions-div"></div>
+                    <div id="action-6" class="week-actions-div"></div>
+                    <div id="action-7" class="week-actions-div"></div>
+                    <div id="action-8" class="week-actions-div"></div>
+                    <div id="action-9" class="week-actions-div"></div>
+                </div>
             </div>
         </div>
-        <div id="overlay"></div>
+        <!-- ДЯСНА ЧАСТ ОТ ЕКРАНА -->
+        <div id="right-wrapper">
+            <!-- Възможност за light / dark theme -->
+            <div id="toggle-mode">
+                <input id="toggle-day-night" type="checkbox">
+            </div>   
 
-        <div class="actions">
-            <h2> Хроника на действията през седмицата: </h2>
-            <button type="submit" id="btn-actions" style="margin-bottom: 2rem;">Вход</button>
-
-            <div id="week-actions">
-                <div id="action-0" class="week-actions-div"></div>
-                <div id="action-1" class="week-actions-div"></div>
-                <div id="action-2" class="week-actions-div"></div>
-                <div id="action-3" class="week-actions-div"></div>
-                <div id="action-4" class="week-actions-div"></div>
-                <div id="action-5" class="week-actions-div"></div>
-                <div id="action-6" class="week-actions-div"></div>
-                <div id="action-7" class="week-actions-div"></div>
-                <div id="action-8" class="week-actions-div"></div>
-                <div id="action-9" class="week-actions-div"></div>
+            <!-- Поддръжка на moodle-форма и статистики -->
+            <div id="moodle-container" class="moodle-container">
+                <iframe id="moodle-iframe" src="moodle-register.html" style="width: 34em; height: 42em;"
+                    scrolling="no"></iframe>
             </div>
-        </div>
-
-        <!--
-            <div class="btn-actions">
-                <button type="submit" id="btn-actions">Вход</button>
-            </div>
-            -->
-
-        <div id="moodle-container" class="moodle-container">
-            <iframe id="moodle-iframe" src="moodle-register.html" style="width: 34em; height: 42em;"
-                scrolling="no"></iframe>
         </div>
     </div>
 </body>
