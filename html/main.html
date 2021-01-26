@@ -1,63 +1,72 @@
 <!DOCTYPE html>
 <html lang="bg">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title> Escape FMI </title>
 
-        <link rel="stylesheet" href="../css/styles.css">
-        <script defer text="text/javascript" src="../js/script.js"></script>
-    </head>
-    <body>
-        <div id="root">
-            <!-- Поле с текстови данни-->
-            <div id="narration"></div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Escape FMI </title>
 
-            <!-- Възможност за light / dark theme -->
-            <div id="toggle-mode">
-                <input id="toggle-day-night" type="checkbox">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script defer text="text/javascript" src="../js/script.js"></script>
+</head>
+
+<body>
+    <div id="root">
+        <!-- Поле с текстови данни-->
+        <div id="narration"></div>
+
+        <!-- Възможност за light / dark theme -->
+        <div id="toggle-mode">
+            <input id="toggle-day-night" type="checkbox">
+        </div>
+
+        <!-- Modals & Popups -- Week 0 -->
+        <!-- <button data-modal-target="#modal">Open Modal</button> -->
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <div id="modal-title" class="title">Example Modal</div>
+                <button data-close-button class="close-button">&times;</button>
             </div>
-
-            <!-- Modals & Popups -- Week 0 -->
-            <button data-modal-target="#modal">Open Modal</button>
-            <div class="modal" id="modal">
-                <div class="modal-header">
-                    <div id="modal-title" class="title">Example Modal</div>
-                    <button data-close-button class="close-button">&times;</button>
-                </div>
-                <div class="modal-body">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse quod alias ut illo doloremque eum ipsum obcaecati distinctio debitis reiciendis quae quia soluta totam doloribus quos nesciunt necessitatibus, consectetur quisquam accusamus ex, dolorum, dicta vel? Nostrum voluptatem totam, molestiae rem at ad autem dolor ex aperiam. Amet assumenda eos architecto, dolor placeat deserunt voluptatibus tenetur sint officiis perferendis atque! Voluptatem maxime eius eum dolorem dolor exercitationem quis iusto totam! Repudiandae nobis nesciunt sequi iure! Eligendi, eius libero. Ex, repellat sapiente!
-                </div>
+            <div class="modal-body">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse quod alias ut illo doloremque eum ipsum
+                obcaecati distinctio debitis reiciendis quae quia soluta totam doloribus quos nesciunt necessitatibus,
+                consectetur quisquam accusamus ex, dolorum, dicta vel? Nostrum voluptatem totam, molestiae rem at ad
+                autem dolor ex aperiam. Amet assumenda eos architecto, dolor placeat deserunt voluptatibus tenetur sint
+                officiis perferendis atque! Voluptatem maxime eius eum dolorem dolor exercitationem quis iusto totam!
+                Repudiandae nobis nesciunt sequi iure! Eligendi, eius libero. Ex, repellat sapiente!
             </div>
-            <div id="overlay"></div>
+        </div>
+        <div id="overlay"></div>
 
-            <div class="actions">
-                <h2> Хроника на действията през седмицата: </h2>
-                <button type="submit" id="btn-actions" style="margin-bottom: 2rem;">Вход</button>
+        <div class="actions">
+            <h2> Хроника на действията през седмицата: </h2>
+            <button type="submit" id="btn-actions" style="margin-bottom: 2rem;">Вход</button>
 
-                <div id="week-actions">
-                    <div id="action-0" class="week-actions-div"></div>
-                    <div id="action-1" class="week-actions-div"></div>
-                    <div id="action-2" class="week-actions-div"></div>
-                    <div id="action-3" class="week-actions-div"></div>
-                    <div id="action-4" class="week-actions-div"></div>
-                    <div id="action-5" class="week-actions-div"></div>
-                    <div id="action-6" class="week-actions-div"></div>
-                    <div id="action-7" class="week-actions-div"></div>
-                    <div id="action-8" class="week-actions-div"></div>
-                    <div id="action-9" class="week-actions-div"></div>
-                </div>
+            <div id="week-actions">
+                <div id="action-0" class="week-actions-div"></div>
+                <div id="action-1" class="week-actions-div"></div>
+                <div id="action-2" class="week-actions-div"></div>
+                <div id="action-3" class="week-actions-div"></div>
+                <div id="action-4" class="week-actions-div"></div>
+                <div id="action-5" class="week-actions-div"></div>
+                <div id="action-6" class="week-actions-div"></div>
+                <div id="action-7" class="week-actions-div"></div>
+                <div id="action-8" class="week-actions-div"></div>
+                <div id="action-9" class="week-actions-div"></div>
             </div>
+        </div>
 
-            <!--
+        <!--
             <div class="btn-actions">
                 <button type="submit" id="btn-actions">Вход</button>
             </div>
             -->
 
-            <div id="moodle-container" class="moodle-container">
-                <iframe id="moodle-iframe" src="moodle-register.html" style="width: 34em; height: 42em;" scrolling="no"></iframe>
-            </div>
+        <div id="moodle-container" class="moodle-container">
+            <iframe id="moodle-iframe" src="moodle-register.html" style="width: 34em; height: 42em;"
+                scrolling="no"></iframe>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>

@@ -78,6 +78,7 @@ body.active {
     right: 0;
     margin-right: 2rem;
     margin-bottom: 2rem;
+    visibility: hidden;
 }
 
 #moodle-iframe {
@@ -102,6 +103,11 @@ body.active {
     top: 0;
     margin-right: 3.3rem;
     margin-top: 2.2rem;
+
+    /* day-nite бутона както и хронологията отдолу са hidden, докато не мине week0 
+    и им се промени динамично css-a (надявам се, че това е възможно) 
+    edit: възможно е, направих го с мудъл прозореца*/
+    visibility: hidden;
 }
 
 #toggle-day-night{
@@ -144,6 +150,7 @@ body.active {
     position: absolute;
     bottom: 5rem;
     left: 32rem;
+    visibility: hidden;
 }
 
 .actions #week-actions {
