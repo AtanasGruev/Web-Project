@@ -1,9 +1,9 @@
 //const openModalButtons = document.querySelectorAll('[data-modal-target]')
-const closeModalButtons = document.querySelectorAll('[data-close-button]')
-const overlay = document.getElementById('overlay')
+const closeModalButtons = document.querySelectorAll('[data-close-button]');
+const overlay = document.getElementById('overlay');
 
 
-const modalOnLoad = document.getElementById("modal")
+const modalOnLoad = document.getElementById("modal");
 // window.onload = openModal(modalOnLoad)
 
 
@@ -22,33 +22,31 @@ const modalOnLoad = document.getElementById("modal")
 overlay.addEventListener('click', () => {
     const modals = document.querySelectorAll('.modal.active')
     modals.forEach(modal => {
-        closeModal(modal)
+        closeModal(modal);
     })
 })
 
 closeModalButtons.forEach(button => {
     button.addEventListener('click', () => {
-        const modal = button.closest('.modal')
-        closeModal(modal)
+        const modal = button.closest('.modal');
+        closeModal(modal);
     })
 })
 
 function openModal(modal) {
-    if (modal == null) return
-    modal.classList.add('active')
-    overlay.classList.add('active')
+    if (modal == null) return;
+    modal.classList.add('active');
+    overlay.classList.add('active');
 }
 
 function closeModal(modal) {
-    if (modal == null) return
-    modal.classList.remove('active')
-    overlay.classList.remove('active')
+    if (modal == null) return;
+    modal.classList.remove('active');
+    overlay.classList.remove('active');
 
     //засега тук, може и да е ненужно
     var moodle = document.getElementById('moodle-container')
     moodle.style.visibility="visible";
-
-
 }
 
 function printMessage(message) {
@@ -92,14 +90,43 @@ function parseWeeks() {
         .then(result => callback(result))
 }
 
+// Това е все едно за обработката преди moodle формата
+// Затова има само по един бутон
 
+// За callback2 ще се минава с цикъл по options от json и ще се създават необходимите
+// бутони. CSS-а ще ги прави да изглеждат ок, споко ;)))
 
 function callback(result) {
-    //console.log(result)
-    var modalBody = document.getElementsByClassName("modal-body")[0]
-    console.log(modalBody.innerHTML)
-    console.log(result[0].event)
-    modalBody.innerHTML = result[0].event
+    var modal = document.getElementById("modal");
+
+    var modalTitle = document.getElementById("modal-title"); 
+    var modalBody = document.getElementsByClassName("modal-body")[0];
+    var modalFooter = document.getElementsByClassName("modal-footer")[0];
+
+    modalTitle.innerHTML = result[0].eventHeader;
+    modalBody.innerHTML = result[0].event;
+    
+    // Четем от json-а и си създаваме бутоните...
+
+    // трябва да се промени малко json-a
+    // скифтвай синтаксиса, много тромаво става
+    // дали да не махнем array като options и да сложим "обект", ддз
+    console.log(result[0].options[0].text); 
+
+    var optButton = document.createElement("button");
+    optButton.innerHTML = result[0].options[0].text;
+    modalFooter.appendChild(optButton);
+
+    // Слагаме eventListener на бутона, като се цъкне, closeModal() и скачаме на следващия modal
+    optButton.addEventListener('click', () => {
+        closeModal(modalOnLoad); // константата от горе, той си е един
+        // Други действия
+    })
+
+    // За CSS-а на бутоните съм написал настройки в css-файла
+    // Когато няма бутони - ок, нищо не се вижда
+    // Когато има, няма да им сменяме стила оттук, затова е удобно ;)
+
     setTimeout(() => { openModal(modalOnLoad) }, 1500);
 
     //не знам дали тук е възможно да бъде цялата логика за week0
