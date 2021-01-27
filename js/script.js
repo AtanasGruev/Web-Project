@@ -6,13 +6,6 @@ const closeModalButtons = document.querySelectorAll('[data-close-button]');
 const overlay = document.getElementById('overlay');
 
 
-const modalOnLoad = document.getElementById("modal");
-// window.onload = openModal(modalOnLoad)
-
-
-//отварянето го преместих в callback функцията, демек отваря се след като е load-нат json-а и е променен innerHTML-a на модала
-//setTimeout(() => { openModal(modalOnLoad) }, 2000);
-
 //закоментираното вече е излишно май, тъй като няма да имаме бутон който да отваря модалите
 
 // openModalButtons.forEach(button => {
@@ -85,10 +78,10 @@ function incrementActions(counterActionsObj) {
     }
 }
 
-function parseWeeks() {
+function parseWeeks(eventNumber) {
     fetch("../scenarios/week-0.json")
         .then(data => data.json())
-        .then(result => callback(result))
+        .then(result => callback(result, eventNumber))
 }
 
 // Това е все едно за обработката преди moodle формата
@@ -97,48 +90,193 @@ function parseWeeks() {
 // За callback2 ще се минава с цикъл по options от json и ще се създават необходимите
 // бутони. CSS-а ще ги прави да изглеждат ок, споко ;)))
 
-function callback(result) {
-    var modal = document.getElementById("modal");
 
-    var modalTitle = document.getElementById("modal-title"); 
-    var modalBody = document.getElementsByClassName("modal-body")[0];
-    var modalFooter = document.getElementsByClassName("modal-footer")[0];
 
-    modalTitle.innerHTML = result[0].eventHeader;
-    modalBody.innerHTML = result[0].event;
-    
-    // Четем от json-а и си създаваме бутоните...
+//понеже се използват и в callback2, а и двете функции са рекурсивни, няма смисъл да се гетват всеки път
+
+const modal = document.getElementById("modal");
+const modalTitle = document.getElementById("modal-title");
+const modalBody = document.getElementsByClassName("modal-body")[0];
+const modalFooter = document.getElementsByClassName("modal-footer")[0];
+//limit е индекса на последния евент от първата част на week0
+const limit = 1;
+
+function callback(result, eventNumber) {
+  
+    modalTitle.innerHTML = result[eventNumber].eventHeader;
+    modalBody.innerHTML = result[eventNumber].event;
 
     // трябва да се промени малко json-a
     // скифтвай синтаксиса, много тромаво става
     // дали да не махнем array като options и да сложим "обект", ддз
-    console.log(result[0].options[0].text); 
 
     var optButton = document.createElement("button");
-    optButton.innerHTML = result[0].options[0].text;
+    optButton.innerHTML = result[eventNumber].options[0].text;
+
+    //изчистваме футъра от старите бутони
+    modalFooter.innerHTML = "";
     modalFooter.appendChild(optButton);
 
-    // Слагаме eventListener на бутона, като се цъкне, closeModal() и скачаме на следващия modal
     optButton.addEventListener('click', () => {
-        closeModal(modalOnLoad); // константата от горе, той си е един
-        return;
+
+        if (eventNumber == limit) {
+            callback2(result, eventNumber + 1);
+        } else {
+            closeModal(modal);
+        }
+
     })
 
-    // За CSS-а на бутоните съм написал настройки в css-файла
-    // Когато няма бутони - ок, нищо не се вижда
-    // Когато има, няма да им сменяме стила оттук, затова е удобно ;)
+    //скрит бутон, който ще бъде кликван от логин скрипта при успешно логване, за да се покаже стат модала
+    var hiddenSignalButton = document.createElement("button");
+    hiddenSignalButton.style.visibility = "hidden";
+    hiddenSignalButton.id = "hidden-signal-button";
+    modalTitle.appendChild(hiddenSignalButton);
 
-    setTimeout(() => { openModal(modalOnLoad) }, 1500);
+    hiddenSignalButton.addEventListener('click', () => {
+        callback(result, eventNumber + 1);
+    })
 
-    //не знам дали тук е възможно да бъде цялата логика за week0
-    //ако е в някакъв цикъл и итерира през евентите, може ли цикъла да блокира до натискане на опция на модала
-    //edit: или до успешното регистриране и логване в мудъл
-    //дали ще е по-лесно на бъдат две отделни функции - в едната е първата половина на week0 - която казва да се 
-    //регистрираш и може да има още едно модал който да обяснява нещо за статистиките когато успееш да се регистрираш
-    //и втората половина е вече тази в която имаме опциите дето трябва да избираш
 
+    setTimeout(() => { openModal(modal) }, 1000);
     
 }
+
+
+function callback2(result, eventNumber) {
+
+    //функцията е рекурсивна, тук е дъното и
+    openModal(modal);
+    if (eventNumber >= result.length) {
+        closeModal(modal);
+        document.getElementById("toggle-mode").style.visibility = "visible";
+        document.getElementsByClassName("actions")[0].style.visibility = "visible";
+        document.getElementById("locations-actions").style.visibility = "visible";
+        document.getElementById("narration").style.visibility = "visible";
+
+
+        return null;
+    }
+
+    modalTitle.innerHTML = result[eventNumber].eventHeader;
+    modalBody.innerHTML = result[eventNumber].event;
+
+    //изчистваме футъра от старите бутони
+    modalFooter.innerHTML = "";
+
+    for (i in result[eventNumber].options) {
+
+
+        let skipVal = result[eventNumber].options[i].skip;
+        let response;
+        if (result[eventNumber].options[i].hasOwnProperty('response')) {
+            response = result[eventNumber].options[i].response;
+        }
+
+        let optButton = document.createElement("button");
+        optButton.innerHTML = result[eventNumber].options[i].text;
+
+
+        optButton.addEventListener('click', () => {
+
+            //на бутоните които са реално опции евент хендлъра променя модала с респонса на съответната избрана опция
+            if (result[eventNumber].options[i].hasOwnProperty('response')) {
+                modalBody.innerHTML = response;
+                modalFooter.innerHTML = "";
+                var responseButton = document.createElement("button");
+                responseButton.innerHTML = "Продължи";
+
+                //респонс бутона вече извиква наново функцията със следващия евент
+                responseButton.addEventListener('click', () => {
+                    callback2(result, eventNumber + skipVal + 1);
+                })
+
+                modalFooter.appendChild(responseButton);
+
+            } else {
+                //това са финалните бутони които нямат опции, а само един бутон
+                callback2(result, eventNumber + skipVal + 1);
+            }
+
+        })
+
+        modalFooter.appendChild(optButton);
+    }
+
+}
+
+//обекта е глобален за да може да се обработва oт saveProgress функцията
+const counterActionsObj = { counterActions: 0, flag: true };
+
+//saveProgress се извиква при затваряне/презареждане на страницата
+window.addEventListener("unload", saveProgress);
+
+function saveProgress() {
+
+    console.log("actions:");
+    console.log(counterActionsObj.counterActions);
+
+    var iframe = document.getElementById("moodle-iframe");
+    var statTotal = iframe.contentWindow.document.getElementsByClassName("health-bar")[0];
+
+    var healthBarValue = iframe.contentWindow.document.getElementsByClassName("health-bar-real")[0];
+    var sleepBarValue = iframe.contentWindow.document.getElementsByClassName("sleep-bar-real")[0];
+    var fmiBarValue = iframe.contentWindow.document.getElementsByClassName("fmi-bar-real")[0];
+
+    var maxStat = iframe.contentWindow.getComputedStyle(statTotal).getPropertyValue('width');
+    maxStat = maxStat.substring(0, maxStat.length - 2);
+
+    var padding = iframe.contentWindow.getComputedStyle(statTotal, null).getPropertyValue('padding-left');
+    padding = padding.substring(0, padding.length - 2);
+
+    maxStat -= padding * 2;
+
+    var currHealth = iframe.contentWindow.getComputedStyle(healthBarValue).getPropertyValue('width');
+    currHealth = currHealth.substring(0, currHealth.length - 2);
+
+    var currSleep = iframe.contentWindow.getComputedStyle(sleepBarValue).getPropertyValue('width');
+    currSleep = currSleep.substring(0, currSleep.length - 2);
+
+    var currFmi = iframe.contentWindow.getComputedStyle(fmiBarValue).getPropertyValue('width');
+    currFmi = currFmi.substring(0, currFmi.length - 2);
+
+    console.log("health is:")
+    console.log(currHealth / maxStat);
+
+    console.log("sleep is:")
+    console.log(currSleep / maxStat);
+
+    console.log("fmi is:")
+    console.log(currFmi / maxStat);
+
+
+    //заявка към php скрипт който ще запазва прогреса
+    //ще трябва да се добави към логин скрипта взимане на този прогрес от базата данни и инициализиране на статовете
+    var url = "../backend/save-progress.php";
+    let progress = {
+        health: currHealth / maxStat,
+        sleep: currSleep / maxStat,
+        fmi: currFmi / maxStat,
+        actions: counterActionsObj.counterActions
+    }
+    //ajax(url, { method: "POST", data: progress });
+
+}
+
+function ajax(url, settings) {
+
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (!xhr.status == 200) {
+            console.error(xhr.responseText);
+        }
+    };
+
+    xhr.open(settings.method || 'GET', url, /* async */ true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(settings.data || null);
+}
+
 
 function parseWeek1(result) {
     fetch("../scenarios/week-1-activities.json")
@@ -148,9 +286,6 @@ function parseWeek1(result) {
 }
 
 function activitiesWeek1(result) {
-    // Трябва да е във fetch(), иначе поначало е видима...
-    document.getElementById("toggle-mode").style.visibility = "visible";
-    document.getElementsByClassName("actions")[0].style.visibility = "visible";
 
     for (let location in result) {
         var locationsDiv = document.getElementById("week-locations");
@@ -256,16 +391,13 @@ function actionButtonClicked(event, action) {
     }
 
 
-    var counterActionsObj = {counterActions : 0, flag: true};
-    // Вместо това - всеки бутон за действие ще вика тази функция incrementActions()
-
     /* var actionBtn = document.getElementById("btn-actions");
     actionBtn.addEventListener("click", function() {
         incrementActions(counterActionsObj)
     }); */
 
 
-    parseWeeks();
+    parseWeeks(0);
     parseWeek1();
 
     printMessage("A semester begins at FMI!");

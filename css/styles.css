@@ -53,6 +53,7 @@ body.active {
 
   -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  visibility: hidden;
 }
 
 #narattion div {
@@ -140,6 +141,7 @@ body.active {
   float: left;
   display: flex;
   flex-direction: column;
+  visibility: hidden;
 }
 
 .week-locations {

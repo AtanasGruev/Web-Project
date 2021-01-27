@@ -50,21 +50,18 @@ var callback = function (text) {
 
     if (text == "Вписахте се успешно!") {
 
-        //moodle-main или както сме кръстили мудъл страницата
-        window.location = "../html/moodle-main.html";
+        //натискаме скрития бутон при логване, тук ще се прави проверка в базата данни на коя седмица е играча
+        //ако е след week0 този бутон няма да се кликва
+        parent.document.getElementById("hidden-signal-button").click();
 
-        //засега просто принтва съобщението
-        // var errorDiv = document.getElementById("mlogin-errors");
-        // errorDiv.innerHTML += text;
+        window.location = "../html/moodle-main.html";
 
     } else {
         //ако името/паролата са невалидни, изтрива полетата и принтва съобщението
         var errorDiv = document.getElementById("mlogin-errors");
-        const userName = document.querySelector("[name=mregister-username]");
-        const password = document.querySelector("[name=mregister-password]");
+        const userName = document.querySelector("[name=mlogin-username]");
+        const password = document.querySelector("[name=mlogin-password]");
 
-        // ВЪЗНИКВА ГРЕШКА ПРИ ОПИТ ЗА ЛОГИН!
-        // ДА СЕ КОМЕНТИРА С ЛЮБО?
         errorDiv.innerHTML += text;
         userName.value = "";
         password.value = "";
