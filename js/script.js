@@ -1,19 +1,7 @@
-// Евентуално при refactoring трябва да докараме тук глобалните променливи...
-var narrationQueue = [];
-
-//const openModalButtons = document.querySelectorAll('[data-modal-target]')
-const closeModalButtons = document.querySelectorAll('[data-close-button]');
+///---------------------------------------------------------///
+///-----------------MODAL променливи и методи---------------------///
+//const closeModalButtons = document.querySelectorAll('[data-close-button]');
 const overlay = document.getElementById('overlay');
-
-
-//закоментираното вече е излишно май, тъй като няма да имаме бутон който да отваря модалите
-
-// openModalButtons.forEach(button => {
-//     button.addEventListener('click', () => {
-//         const modal = document.querySelector(button.dataset.modalTarget)
-//         openModal(modal)
-//     })
-// })
 
 overlay.addEventListener('click', () => {
     const modals = document.querySelectorAll('.modal.active')
@@ -22,19 +10,23 @@ overlay.addEventListener('click', () => {
     })
 })
 
+/*
 closeModalButtons.forEach(button => {
     button.addEventListener('click', () => {
         const modal = button.closest('.modal');
         closeModal(modal);
     })
 })
+*/
 
+// Open Modal -- привежда модал в активност
 function openModal(modal) {
     if (modal == null) return;
     modal.classList.add('active');
     overlay.classList.add('active');
 }
 
+// Close Modal -- затваря модал
 function closeModal(modal) {
     if (modal == null) return;
     modal.classList.remove('active');
@@ -44,7 +36,13 @@ function closeModal(modal) {
     var moodle = document.getElementById('moodle-container')
     moodle.style.visibility="visible";
 }
+///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
+///---------------------------------------------------------///
+///----------------ЗАПЪЛВАНЕ НА NARRATION-------------------///
+var narrationQueue = []; // държим си съобщенията от #narration
+
+// Добавяне на уведомление в полето #narration
 function printMessage(message) {
     var narrationField = document.getElementById("narration");
     
@@ -53,88 +51,89 @@ function printMessage(message) {
 
     narrationQueue.push(message);
     narrationField.appendChild(messageDiv);
-    if (narrationQueue.length == 15) {
+    if (narrationQueue.length == 25) {
         narrationField.lastElementChild().remove();
     }
 }
+///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
+///---------------------------------------------------------///
+///--------------------СЕДМИЧНИ ДЕЙСТВИЯ--------------------///
+
+//Oбектът е глобален, за да може да се обработва oт saveProgress функцията
+const counterActionsObj = { counterActions: 0 };
+
+// Инкрементират се действията, за да се проследи седмичният прогрес
 function incrementActions(counterActionsObj) {
-    if (counterActionsObj["counterActions"] % 10 == 0 && counterActionsObj["flag"] == false) {
-        var divsActions = document.getElementsByClassName("week-actions-div");
-        for (var i = 0; i < divsActions.length; i += 1) {
+    // Ако counterActions % 10 == 0, то сме приключили седмицата
+    // Това следва да се отрази на moodle статистиката и да нулира
+    // седмичния прогрес
+    if(counterActionsObj["counterActions"] % 10 == 0) {
+        var divsActions = document.getElementsByClassName("week-actions-div");    
+        for (let i = 0; i < divsActions.length; i += 1) {
             divsActions[i].style.backgroundColor = "#39D078";
             divsActions[i].style.boxShadow = "none";
         }
-        counterActionsObj["flag"] = true;
-    } else if (counterActionsObj["flag"]) {
-        var currAction = document.getElementById("action-" + (counterActionsObj["counterActions"]) % 10);
+        var currAction = document.getElementById("action-" + (counterActionsObj["counterActions"]) % 10);   
         currAction.style.backgroundColor = "#007CFF";
-        currAction.style.boxShadow = "0 0 10px #39D078";
-        counterActionsObj["counterActions"]++;
-
-        if (counterActionsObj["counterActions"] % 10 == 0) {
-            counterActionsObj["flag"] = false;
-        }
+        currAction.style.boxShadow = "0 0 10px #39D078"; 
+    } else {
+        var currAction = document.getElementById("action-" + (counterActionsObj["counterActions"]) % 10);   
+        currAction.style.backgroundColor = "#007CFF";
+        currAction.style.boxShadow = "0 0 10px #39D078"; 
     }
 }
+///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
-function parseWeeks(eventNumber) {
-    fetch("../scenarios/week-0.json")
-        .then(data => data.json())
-        .then(result => callback(result, eventNumber))
-}
-
-// Това е все едно за обработката преди moodle формата
-// Затова има само по един бутон
-
-// За callback2 ще се минава с цикъл по options от json и ще се създават необходимите
-// бутони. CSS-а ще ги прави да изглеждат ок, споко ;)))
-
-
-
-//понеже се използват и в callback2, а и двете функции са рекурсивни, няма смисъл да се гетват всеки път
-
+///---------------------------------------------------------///
+///------------------ОБРАБОТКА СЕДМИЦА 0--------------------///
 const modal = document.getElementById("modal");
 const modalTitle = document.getElementById("modal-title");
 const modalBody = document.getElementsByClassName("modal-body")[0];
 const modalFooter = document.getElementsByClassName("modal-footer")[0];
-//limit е индекса на последния евент от първата част на week0
+//limit е индексът на последното събитие от първата част на седмица 0
 const limit = 1;
 
-function callback(result, eventNumber) {
+// Прочита сценария и работи с него
+function parseBeginning(eventNumber) {
+    fetch("../scenarios/week-0.json")
+        .then(data => data.json())
+        .then(result => loadWeek0Events(result, eventNumber))
+}
+
+// Подготовка на интерфейс в седмица 0
+function loadWeek0Events(result, eventNumber) {
   
+    // Четем събитията от json файла
     modalTitle.innerHTML = result[eventNumber].eventHeader;
     modalBody.innerHTML = result[eventNumber].event;
 
-    // трябва да се промени малко json-a
-    // скифтвай синтаксиса, много тромаво става
-    // дали да не махнем array като options и да сложим "обект", ддз
-
+    // Добавят се към UI елементи
     var optButton = document.createElement("button");
     optButton.innerHTML = result[eventNumber].options[0].text;
 
-    //изчистваме футъра от старите бутони
+    //Изчистваме footer от старите бутони
     modalFooter.innerHTML = "";
     modalFooter.appendChild(optButton);
 
     optButton.addEventListener('click', () => {
-
         if (eventNumber == limit) {
-            callback2(result, eventNumber + 1);
+            activateWeek0Events(result, eventNumber + 1);
         } else {
             closeModal(modal);
         }
 
     })
 
-    //скрит бутон, който ще бъде кликван от логин скрипта при успешно логване, за да се покаже стат модала
+    // Създава се скрит бутон
+    // При успешно логване той се кликва, за да се покаже страницата със статистиките
     var hiddenSignalButton = document.createElement("button");
     hiddenSignalButton.style.visibility = "hidden";
     hiddenSignalButton.id = "hidden-signal-button";
     modalTitle.appendChild(hiddenSignalButton);
 
     hiddenSignalButton.addEventListener('click', () => {
-        callback(result, eventNumber + 1);
+        loadWeek0Events(result, eventNumber + 1);
     })
 
 
@@ -142,18 +141,17 @@ function callback(result, eventNumber) {
     
 }
 
+// 
+function activateWeek0Events(result, eventNumber) {
 
-function callback2(result, eventNumber) {
-
-    //функцията е рекурсивна, тук е дъното и
+    //функцията е рекурсивна, тук е дъното й
     openModal(modal);
     if (eventNumber >= result.length) {
         closeModal(modal);
         document.getElementById("toggle-mode").style.visibility = "visible";
         document.getElementsByClassName("actions")[0].style.visibility = "visible";
-        document.getElementById("locations-actions").style.visibility = "visible";
+        document.getElementById("locations-activities").style.visibility = "visible";
         document.getElementById("narration").style.visibility = "visible";
-
 
         return null;
     }
@@ -161,11 +159,10 @@ function callback2(result, eventNumber) {
     modalTitle.innerHTML = result[eventNumber].eventHeader;
     modalBody.innerHTML = result[eventNumber].event;
 
-    //изчистваме футъра от старите бутони
+    // Изчистваме footer от старите бутони
     modalFooter.innerHTML = "";
 
-    for (i in result[eventNumber].options) {
-
+    for (let i in result[eventNumber].options) {
 
         let skipVal = result[eventNumber].options[i].skip;
         let response;
@@ -176,37 +173,37 @@ function callback2(result, eventNumber) {
         let optButton = document.createElement("button");
         optButton.innerHTML = result[eventNumber].options[i].text;
 
-
         optButton.addEventListener('click', () => {
 
-            //на бутоните които са реално опции евент хендлъра променя модала с респонса на съответната избрана опция
+            // На бутоните, които реално са опции, eventHandler() променя модала с 
+            // response на съответната избрана опция
             if (result[eventNumber].options[i].hasOwnProperty('response')) {
                 modalBody.innerHTML = response;
                 modalFooter.innerHTML = "";
                 var responseButton = document.createElement("button");
                 responseButton.innerHTML = "Продължи";
 
-                //респонс бутона вече извиква наново функцията със следващия евент
+                //response бутонът извиква функцията отново със следващия event
                 responseButton.addEventListener('click', () => {
-                    callback2(result, eventNumber + skipVal + 1);
+                    activateWeek0Events(result, eventNumber + skipVal + 1);
+                    // activateWeek0Events(result, eventNumber + skipVal + 1);
                 })
 
                 modalFooter.appendChild(responseButton);
 
             } else {
-                //това са финалните бутони които нямат опции, а само един бутон
-                callback2(result, eventNumber + skipVal + 1);
+                activateWeek0Events(result, eventNumber + skipVal + 1);
             }
 
         })
-
         modalFooter.appendChild(optButton);
     }
-
 }
+///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
-//обекта е глобален за да може да се обработва oт saveProgress функцията
-const counterActionsObj = { counterActions: 0, flag: true };
+
+///---------------------------------------------------------///
+///-----------------ЗАПАЗВАНЕ НА ПРОГРЕС--------------------///
 
 //saveProgress се извиква при затваряне/презареждане на страницата
 window.addEventListener("unload", saveProgress);
@@ -250,8 +247,8 @@ function saveProgress() {
     console.log(currFmi / maxStat);
 
 
-    //заявка към php скрипт който ще запазва прогреса
-    //ще трябва да се добави към логин скрипта взимане на този прогрес от базата данни и инициализиране на статовете
+    // Заявка към php скрипт, който ще запазва прогреса
+    // Ще трябва да се добави към логин скрипта взимане на този прогрес от базата данни и инициализиране на статовете
     var url = "../backend/save-progress.php";
     let progress = {
         health: currHealth / maxStat,
@@ -276,40 +273,81 @@ function ajax(url, settings) {
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.send(settings.data || null);
 }
+///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
+///---------------------------------------------------------///
+///-----------------РАБОТА СЪС СЕДМИЦИТЕ--------------------///
 
-function parseWeek1(result) {
-    fetch("../scenarios/week-1-activities.json")
+// Чете json файлове и вика подходящи функции
+function parseWeek(weekNum) {
+    fetch("../scenarios/week-"+ weekNum + "-activities.json")
         .then(data => data.json())
         .then(result => activitiesWeek1(result))
         //.then(result => notificationsWeek1(result))
 }
 
 function activitiesWeek1(result) {
-
     for (let location in result) {
-        var locationsDiv = document.getElementById("week-locations");
+        // Подготовка на бутоните за локации
+        var locationsDiv = document.getElementById("locations-activities");
+
+        // Искаме да добавим цял <div>, който да поддържа локация и 
+        // прилежащите й опции
+        var newPlacementDiv = document.createElement("div");
+        newPlacementDiv.setAttribute("class", "locations-activities-container");
+        locationsDiv.appendChild(newPlacementDiv);
+
+        locationsPlacementDiv = document.createElement("div");
+        locationsPlacementDiv.setAttribute("class", "week-locations");
+        activitiesPlacementDiv = document.createElement("div");
+        activitiesPlacementDiv.setAttribute("class", "week-activities");
+        newPlacementDiv.appendChild(locationsPlacementDiv);
+        newPlacementDiv.appendChild(activitiesPlacementDiv);
+
         var locButton = document.createElement("button");
         locButton.setAttribute("class", "week-locations-button");
         locButton.innerHTML = location;
-        locationsDiv.appendChild(locButton); 
+        locationsPlacementDiv.appendChild(locButton); 
 
+        // Ако се натисне локация, показват се възможни действия
         locButton.addEventListener('click', function(event) {
             locationButtonClicked(event, location);
         })
 
-        var actionsDiv = document.getElementById("week-activities");
+        // Добавят се бутоните за действия за съответната локация
         for (let i = 0; i < result[location].length; i++) {
+
+            // Създаваме си <div>, в който ще има бутон за действие и 
+            // изображение (default - не се вижда), което ще отчита време.
+            var actDiv = document.createElement("div");
+            actDiv.setAttribute("class", "week-activities-clock-div");
+
+            // Бутон за действие
             var actButton = document.createElement("button");
             actButton.setAttribute("class", "week-activities-button");
             actButton.setAttribute("name", location);
             actButton.style.display = "none";
             actButton.innerHTML = result[location][i]["event"];
-            actionsDiv.appendChild(actButton);
+            actDiv.appendChild(actButton);
+
+            // Допълвваме с иконка за часовник
+            var clockIconDay = document.createElement("img");
+            var clockIconNight = document.createElement("img");
+
+            clockIconDay.setAttribute("src", "../misc/sandclock-day.jpg");
+            clockIconNight.setAttribute("src", "../misc/sandclock-night.png")
+            clockIconDay.setAttribute("class", "activities-clock");
+            clockIconNight.setAttribute("class", "activities-clock");
+
+            actDiv.appendChild(clockIconDay);
+
+            activitiesPlacementDiv.appendChild(actDiv);
 
             actButton.addEventListener('click', function(event) {
-                var action = result[location][i];
-                actionButtonClicked(event, action); // предстои да се имплементира
+                if(!transitionFlagObj["transition"]) {
+                    var action = result[location][i];
+                    actionButtonClicked(event, action);
+                }
             })
         }
     }
@@ -328,77 +366,173 @@ function locationButtonClicked(event, location) {
     event.currentTarget.style.textDecoration = "underline";
 
     // Бутоните на другите локации не се виждат
-    allButtons = document.getElementsByClassName("week-activities-button");
+    var allButtons = document.getElementsByClassName("week-activities-button");
     allButtons = [...allButtons];
     for (let b in allButtons) {
         allButtons[b].style.display = "none";
     }
 
-    appropriateButtons = document.getElementsByName(location);
+    var appropriateButtons = document.getElementsByName(location);
     appropriateButtons = [...appropriateButtons];
     for (let b in appropriateButtons) {
         appropriateButtons[b].style.display = "block";
     }
 }
 
+// Ако действие се извършва, с този флаг забраняваме достъп до бутоните
+transitionFlagObj = {transition : false};
+
+// За часовникът - още един обект
+clockObj = {clockDay: true}
+
 function actionButtonClicked(event, action) {
-    // Предстои да се имплементира
-}
+    // Връзка с брояч на действия през седмицата
+    incrementActions(counterActionsObj);
+    counterActionsObj["counterActions"]++;
 
+    if (counterActionsObj["counterActions"] % 10 == 0) {
+        var moodleWeek = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("week-notification")[0];
+        var listWeekNotifications = ["Доживя до седмица ", "Настъпи седмица ", "Ето я и новата седмица", "Все някак добута до седмица", 
+                                     "Семестърът няма край! Седмица", "Ох, само да мине и седмица", "Хайде нека малко поолекно със седмица"];
 
-(function () {
-    // Да се направи на отделна функция, а IIFE да служи за main()
-
-    var toggleMode = document.getElementById("toggle-day-night");
-    var counterToggle = 0;
-
-    toggleMode.onclick = () => {
-        document.querySelector("body").classList.toggle("active");
-        console.log(counterToggle);
-        if (counterToggle % 2 == 0) {
-            // Добавяме рамка в night mode
-            var iframeVar = document.getElementById("moodle-iframe").contentWindow;
-            var moodleRoot = iframeVar.document.getElementById("root");
-
-            moodleRoot.style.border = "2px solid #FDD835";
-            moodleRoot.style.borderRadius = "0.5rem";
-
-            var currAddress = iframeVar.location.href;
-            var targetAddress = currAddress.substring(0, currAddress.lastIndexOf('/'));
-
-            // Нуждаем се от код, който да прави видимо съдържанието на moodle-main
-            if (iframeVar.location.href === targetAddress + "/moodle-main.html") {
-                moodleRoot.style.color = "#FDD835";
-                moodleRoot.style.backgroundColor = "#09071E";
-            }
-        } else {
-            // При последващ toggle, махаме рамката
-            var iframeVar = document.getElementById("moodle-iframe").contentWindow;
-            var moodleRoot = iframeVar.document.getElementById("root");
-
-            moodleRoot.style.border = "2px solid black";
-            moodleRoot.style.color = "black";
-
-            var currAddress = iframeVar.location.href;
-            var targetAddress = currAddress.substring(0, currAddress.lastIndexOf('/'));
-
-            if (iframeVar.location.href === targetAddress + "/moodle-main.html") {
-                moodleRoot.style.border = "2px solid black";
-                moodleRoot.style.backgroundColor = "white";
-            }
-        }
-        counterToggle++;
+        var indexWeekMessage = Math.floor(Math.random() * listWeekNotifications.length);
+        moodleWeek.innerHTML = listWeekNotifications[indexWeekMessage] + " " + (counterActionsObj["counterActions"] / 10 + 1) + "!"; 
     }
 
+    // Симулация на времетраене - правим часовника видим и го анимираме
+    var activityClock = event.currentTarget.parentNode.getElementsByClassName("activities-clock")[0];
+    activityClock.style.visibility = "visible"; // часовникът става видим
 
-    /* var actionBtn = document.getElementById("btn-actions");
-    actionBtn.addEventListener("click", function() {
-        incrementActions(counterActionsObj)
-    }); */
+    // Флагът за извършвано действие се вдига
+    transitionFlagObj["transition"] = true;
+
+    // Бутоните сменят стила си, т.е. са неактивни
+    var allButtons = document.getElementsByClassName("week-activities-button");
+    allButtons = [...allButtons];
+    for (let b in allButtons) {
+        allButtons[b].style.cursor = "default";
+        allButtons[b].style.borderColor = "#B2B2B2";
+        allButtons[b].style.color = "#B2B2B2";
+    }
+
+    setTimeout(function() {
+        activityClock.style.visibility = "hidden"
+        for (let b in allButtons) {
+            allButtons[b].style.cursor = "pointer";
+            allButtons[b].style.borderColor = "black";
+            allButtons[b].style.color = "black";
+        }
+        transitionFlagObj["transition"] = false;
+    }, 10000);
+
+}
+///------------------XXXXXXXXXXXXXXXXXX---------------------///
+
+///---------------------------------------------------------///
+///-----------------НОЩЕН РЕЖИМ НА ИГРАТА-------------------///
+var toggleMode = document.getElementById("toggle-day-night");
+var counterToggle = 0;
+
+toggleMode.onclick = () => {
+    document.querySelector("body").classList.toggle("active");
+    if (counterToggle % 2 == 0) {
+        /* NIGHT MODE ON */
+
+        // Добавяме рамка в night mode
+        var iframeVar = document.getElementById("moodle-iframe").contentWindow;
+        var moodleRoot = iframeVar.document.getElementById("root");
+
+        moodleRoot.style.border = "2px solid #FDD835";
+        moodleRoot.style.borderRadius = "0.5rem";
+
+        var currAddress = iframeVar.location.href;
+        var targetAddress = currAddress.substring(0, currAddress.lastIndexOf('/'));
+
+        // Нуждаем се от код, който да прави видимо съдържанието на moodle-main
+        if (iframeVar.location.href === targetAddress + "/moodle-main.html") {
+            moodleRoot.style.color = "#FDD835";
+            moodleRoot.style.backgroundColor = "#09071E";
+        }
+
+        // Променяме цветовете на бутоните за локации и действия
+        var nightLocationButtons = document.getElementsByClassName("week-locations-button");
+        nightLocationButtons = [...nightLocationButtons];
+        for (let b in nightLocationButtons) {
+            nightLocationButtons[b].style.color = "#FDD835";
+            nightLocationButtons[b].style.backgroundColor = "#09071E";
+            nightLocationButtons[b].style.border = "2px solid #FDD835";
+        }
+
+        var nightActivitiesButtons = document.getElementsByClassName("week-activities-button");
+        nightActivitiesButtons = [...nightActivitiesButtons];
+        for (let b in nightActivitiesButtons) {
+            nightActivitiesButtons[b].style.color = "#FDD835";
+            nightActivitiesButtons[b].style.backgroundColor = "#09071E";
+            nightActivitiesButtons[b].style.border = "2px solid #FDD835";
+        }
+
+        // Ако сме задействали нещо, трябва да сменим иконката за часовника
+        var clockIcon = document.getElementsByClassName("activities-clock")[0];
+        if (clockObj["clockDay"]) {
+            clockIcon.setAttribute("src", "../misc/sandclock-night.png ");
+        }
 
 
-    parseWeeks(0);
-    parseWeek1();
+    } else {
+        /* NIGHT MODE OFF */
 
-    printMessage("A semester begins at FMI!");
+        // При последващ toggle, махаме рамката
+        var iframeVar = document.getElementById("moodle-iframe").contentWindow;
+        var moodleRoot = iframeVar.document.getElementById("root");
+
+        moodleRoot.style.border = "2px solid black";
+        moodleRoot.style.color = "black";
+
+        var currAddress = iframeVar.location.href;
+        var targetAddress = currAddress.substring(0, currAddress.lastIndexOf('/'));
+
+        if (iframeVar.location.href === targetAddress + "/moodle-main.html") {
+            moodleRoot.style.border = "2px solid black";
+            moodleRoot.style.backgroundColor = "white";
+        }
+
+        // Връщаме цветовете на бутони и локации
+        var nightLocationButtons = document.getElementsByClassName("week-locations-button");
+        nightLocationButtons = [...nightLocationButtons];
+        for (let b in nightLocationButtons) {
+            nightLocationButtons[b].style.color = "black";
+            nightLocationButtons[b].style.backgroundColor = "white";
+            nightLocationButtons[b].style.border = "2px solid #F5F5F5";
+        }
+
+        var nightActivitiesButtons = document.getElementsByClassName("week-activities-button");
+        nightActivitiesButtons = [...nightActivitiesButtons];
+        for (let b in nightActivitiesButtons) {
+            nightActivitiesButtons[b].style.color = "black";
+            nightActivitiesButtons[b].style.backgroundColor = "white";
+            nightActivitiesButtons[b].style.border = "2px solid black";
+        }
+
+        var clockIcon = document.getElementsByClassName("activities-clock")[0];
+        if (!clockObj["clockDay"]) {
+            clockIcon.setAttribute("src", "../misc/sandclock-day.jpg")
+        }
+
+    }
+
+    counterToggle++;
+}
+///------------------XXXXXXXXXXXXXXXXXX---------------------///
+
+// Main() функционалност
+(function () {
+
+    parseBeginning(0);
+    for(let i = 1; i < 2; i++) {
+        parseWeek(i);
+    }
+
+    for (let i = 0; i < 20; i++) {
+        printMessage("Начало на семестъра във ФМИ...<br/><br/>");
+    }
 })();

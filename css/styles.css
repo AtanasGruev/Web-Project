@@ -137,11 +137,24 @@ body.active {
   opacity: 1;
 }
 
-#locations-actions {
-  float: left;
+button {
+  cursor: pointer;
+}
+
+#locations-activities {
+  display: flex; 
+  align-items: flex-start;
+  visibility: hidden;
+  margin-left: 5rem;
+}
+
+.locations-activities-container {
   display: flex;
   flex-direction: column;
-  visibility: hidden;
+  align-items: center;
+  justify-content: center;
+  width: 16rem;
+  max-width: 16rem;;
 }
 
 .week-locations {
@@ -149,20 +162,17 @@ body.active {
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
+  width: inherit;
 }
 
-.week-locations:first-child {
-  margin-left: 5rem;
-}
-
-.week-locations button {
+.week-locations-button {
   border: 0;
   outline: 0;
   font-weight: bold;
 
-  background-color:#F5F5F5;
-  margin-top: 1rem;
-  margin-left: 1rem;
+  background-color: #FFFFFF;
+  border: 2px solid #F5F5F5;
+  margin: 1rem;
   font-size: 1.25rem;
 
   cursor: pointer;
@@ -176,14 +186,43 @@ body.active {
 .week-activites {
   display: flex;
   flex-direction: column;
-  margin-left: 5rem;
+  justify-content: center;
+  align-items: flex-start;
+  width: 80%;
+}
+
+.week-activities-clock-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes spin { 
+  100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } 
+}
+
+.activities-clock {
+  width: 40px;
+  height: auto;
+  visibility: hidden;
+  animation: spin 5s linear infinite;
 }
 
 .week-activities-button {
   margin: 0.5rem;
   padding: 0.2rem;
   background-color: white;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  width: 12rem;
+}
+
+.week-activites-button-cooldown {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: -1;
+  height: 100%;
+  background-color: #DDDDDD;
 }
 
 .moodle-container {
@@ -247,7 +286,7 @@ body.active {
 
 .actions {
   position: absolute;
-  bottom: 5rem;
+  bottom: 6.5rem;
   left: 22.5%;
   visibility: hidden;
 }

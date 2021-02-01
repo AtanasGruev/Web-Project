@@ -1,4 +1,4 @@
-#drop database if exists webproj;
+# DROP DATABASE IF EXISTS webproj;
 CREATE DATABASE webproj
 CHARACTER SET="utf8";
 USE webproj;
@@ -15,5 +15,6 @@ password VARCHAR(200) NOT NULL
 
 );
 
+# DROP USER IF EXISTS 'register_user'@'localhost';
 CREATE USER 'register_user'@'localhost' IDENTIFIED BY 'passw0rd';
 GRANT ALL ON webproj.users TO 'register_user'@'localhost';
