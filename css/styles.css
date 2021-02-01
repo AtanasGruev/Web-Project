@@ -225,6 +225,11 @@ button {
   background-color: #DDDDDD;
 }
 
+.narration-response {
+  margin-bottom: 1rem;
+  float: right;
+}
+
 .moodle-container {
   visibility: hidden;
 }

@@ -1,7 +1,7 @@
 {
     "Общежитие": [
         {
-            "event": "Игра на CS:GO",
+            "event": "Игра на CS",
             "statsChange": {
                 "fun": 1,
                 "health": -0.5,

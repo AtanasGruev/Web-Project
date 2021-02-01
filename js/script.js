@@ -282,12 +282,14 @@ function ajax(url, settings) {
 function parseWeek(weekNum) {
     fetch("../scenarios/week-"+ weekNum + "-activities.json")
         .then(data => data.json())
-        .then(result => activitiesWeek1(result))
-        //.then(result => notificationsWeek1(result))
+        .then(result => activitiesWeek1(result, weekNum))
+    
 }
 
-function activitiesWeek1(result) {
+function activitiesWeek1(result, weekNum) {
     for (let location in result) {
+        // За взимане индекс на часовник при инвертиране на toggle
+        
         // Подготовка на бутоните за локации
         var locationsDiv = document.getElementById("locations-activities");
 
@@ -306,6 +308,7 @@ function activitiesWeek1(result) {
 
         var locButton = document.createElement("button");
         locButton.setAttribute("class", "week-locations-button");
+        locButton.setAttribute("id", location.replace(/\s+/g, ''));
         locButton.innerHTML = location;
         locationsPlacementDiv.appendChild(locButton); 
 
@@ -325,6 +328,7 @@ function activitiesWeek1(result) {
             // Бутон за действие
             var actButton = document.createElement("button");
             actButton.setAttribute("class", "week-activities-button");
+            actButton.setAttribute("id", result[location][i]["event"].replace(/\s+/g, ''));
             actButton.setAttribute("name", location);
             actButton.style.display = "none";
             actButton.innerHTML = result[location][i]["event"];
@@ -339,7 +343,18 @@ function activitiesWeek1(result) {
             clockIconDay.setAttribute("class", "activities-clock");
             clockIconNight.setAttribute("class", "activities-clock");
 
-            actDiv.appendChild(clockIconDay);
+            if(counterToggle % 2 == 0) {
+                if(actDiv.childNodes.length == 2) {
+                    actDiv.removeChild(actDiv.childNodes[1]);
+                }
+                actDiv.appendChild(clockIconDay);
+            }
+            else {
+                if(actDiv.childNodes.length == 2) {
+                    actDiv.removeChild(actDiv.childNodes[1]);
+                }
+                actDiv.appendChild(clockIconNight);
+            }
 
             activitiesPlacementDiv.appendChild(actDiv);
 
@@ -351,6 +366,11 @@ function activitiesWeek1(result) {
             })
         }
     }
+
+    // Прочитаме notifications за седмицата и ги връзваме с бутоните, narrations и bars
+    fetch("../scenarios/week-"+ weekNum + "-notifications.json")
+        .then(data => data.json())
+        .then(result => notificationsWeek1(result))
 }
 
 function locationButtonClicked(event, location) {
@@ -381,9 +401,7 @@ function locationButtonClicked(event, location) {
 
 // Ако действие се извършва, с този флаг забраняваме достъп до бутоните
 transitionFlagObj = {transition : false};
-
-// За часовникът - още един обект
-clockObj = {clockDay: true}
+clockIndexObj = {clockIndex : 0};
 
 function actionButtonClicked(event, action) {
     // Връзка с брояч на действия през седмицата
@@ -399,12 +417,17 @@ function actionButtonClicked(event, action) {
         moodleWeek.innerHTML = listWeekNotifications[indexWeekMessage] + " " + (counterActionsObj["counterActions"] / 10 + 1) + "!"; 
     }
 
+    // Флагът за извършвано действие се вдига
+    transitionFlagObj["transition"] = true;
+
     // Симулация на времетраене - правим часовника видим и го анимираме
     var activityClock = event.currentTarget.parentNode.getElementsByClassName("activities-clock")[0];
     activityClock.style.visibility = "visible"; // часовникът става видим
 
-    // Флагът за извършвано действие се вдига
-    transitionFlagObj["transition"] = true;
+    // Да се намери индекс на часовник
+    var allClocks = document.getElementsByClassName("activities-clock");
+    allClocks = [...allClocks];
+    clockIndexObj["clockIndex"] = allClocks.map(elem => elem.style.visibility).indexOf('visible');
 
     // Бутоните сменят стила си, т.е. са неактивни
     var allButtons = document.getElementsByClassName("week-activities-button");
@@ -416,16 +439,106 @@ function actionButtonClicked(event, action) {
     }
 
     setTimeout(function() {
-        activityClock.style.visibility = "hidden"
-        for (let b in allButtons) {
-            allButtons[b].style.cursor = "pointer";
-            allButtons[b].style.borderColor = "black";
-            allButtons[b].style.color = "black";
-        }
+        activityClock.style.visibility = "hidden";
         transitionFlagObj["transition"] = false;
     }, 10000);
-
 }
+
+function notificationsWeek1(result) {
+    // За всеки бутон добавяме по още един eventListener()
+    // За всеки бутон ще взмемем възможните notifications, които да се
+    // случат при такова събитие, и ще ги вържем с другите неща
+    for(let location in result) {
+        for (let activity in result[location]) {
+            activityReduced = activity.replace(/\s+/g, '');
+            var actButton = document.getElementById(activityReduced);
+            // console.log(result[location][activity])
+            actButton.addEventListener("click", function() {
+                 // кое съобщение ще излезе
+                var randomNotification = Math.floor(Math.random() * result[location][activity].length);
+
+                // вероятност за получаване на съобщение
+                var flagNotification = false;
+                if (Math.floor(Math.random()) > 0.5) flagNotification = true;
+
+                // timeout интервал
+
+                var action = result[location][activity][randomNotification];
+                openModal(modal);
+                modalTitle.innerHTML = action["eventHeader"];
+                modalBody.innerHTML = action["event"];
+                modalFooter.innerHTML = "";
+
+                var narrationField = document.getElementById("narration");
+
+                for (let i in action["options"]) {
+                    var optButton = document.createElement("button");
+                    optButton.innerHTML = action["options"][i]["text"];
+
+                    optButton.addEventListener("click", function() {
+                        // Да изведем response на #narration
+                        var messageDiv = document.createElement("div");
+                        messageDiv.setAttribute("class", "narration-response");
+                        messageDiv.innerHTML = action["options"][i]["response"];
+                        narrationField.prepend(messageDiv);
+                        closeModal(modal);
+                    })
+
+                    modalFooter.appendChild(optButton);
+                }
+            })
+        }
+    }
+
+    /*------------------------------------*/
+     //функцията е рекурсивна, тук е дъното й
+     /*
+     modalTitle.innerHTML = result[eventNumber].eventHeader;
+     modalBody.innerHTML = result[eventNumber].event;
+ 
+     // Изчистваме footer от старите бутони
+     modalFooter.innerHTML = "";
+ 
+     for (let i in result[eventNumber].options) {
+ 
+         let skipVal = result[eventNumber].options[i].skip;
+         let response;
+         if (result[eventNumber].options[i].hasOwnProperty('response')) {
+             response = result[eventNumber].options[i].response;
+         }
+ 
+         let optButton = document.createElement("button");
+         optButton.innerHTML = result[eventNumber].options[i].text;
+ 
+         optButton.addEventListener('click', () => {
+ 
+             // На бутоните, които реално са опции, eventHandler() променя модала с 
+             // response на съответната избрана опция
+             if (result[eventNumber].options[i].hasOwnProperty('response')) {
+                 modalBody.innerHTML = response;
+                 modalFooter.innerHTML = "";
+                 var responseButton = document.createElement("button");
+                 responseButton.innerHTML = "Продължи";
+ 
+                 //response бутонът извиква функцията отново със следващия event
+                 responseButton.addEventListener('click', () => {
+                     activateWeek0Events(result, eventNumber + skipVal + 1);
+                     // activateWeek0Events(result, eventNumber + skipVal + 1);
+                 })
+ 
+                 modalFooter.appendChild(responseButton);
+ 
+             } else {
+                 activateWeek0Events(result, eventNumber + skipVal + 1);
+             }
+ 
+         })
+         modalFooter.appendChild(optButton);
+     }
+     /*------------------------------------*/
+}
+
+
 ///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
 ///---------------------------------------------------------///
@@ -434,6 +547,7 @@ var toggleMode = document.getElementById("toggle-day-night");
 var counterToggle = 0;
 
 toggleMode.onclick = () => {
+
     document.querySelector("body").classList.toggle("active");
     if (counterToggle % 2 == 0) {
         /* NIGHT MODE ON */
@@ -472,11 +586,8 @@ toggleMode.onclick = () => {
         }
 
         // Ако сме задействали нещо, трябва да сменим иконката за часовника
-        var clockIcon = document.getElementsByClassName("activities-clock")[0];
-        if (clockObj["clockDay"]) {
-            clockIcon.setAttribute("src", "../misc/sandclock-night.png ");
-        }
-
+        var clockIcon = document.getElementsByClassName("activities-clock")[clockIndexObj["clockIndex"]];
+        clockIcon.setAttribute("src", "../misc/sandclock-night.png");
 
     } else {
         /* NIGHT MODE OFF */
@@ -513,15 +624,13 @@ toggleMode.onclick = () => {
             nightActivitiesButtons[b].style.border = "2px solid black";
         }
 
-        var clockIcon = document.getElementsByClassName("activities-clock")[0];
-        if (!clockObj["clockDay"]) {
-            clockIcon.setAttribute("src", "../misc/sandclock-day.jpg")
-        }
-
+        var clockIcon = document.getElementsByClassName("activities-clock")[clockIndexObj["clockIndex"]];
+        clockIcon.setAttribute("src", "../misc/sandclock-day.jpg")
     }
 
     counterToggle++;
 }
+
 ///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
 // Main() функционалност
@@ -530,9 +639,5 @@ toggleMode.onclick = () => {
     parseBeginning(0);
     for(let i = 1; i < 2; i++) {
         parseWeek(i);
-    }
-
-    for (let i = 0; i < 20; i++) {
-        printMessage("Начало на семестъра във ФМИ...<br/><br/>");
     }
 })();
