@@ -210,53 +210,30 @@ window.addEventListener("unload", saveProgress);
 
 function saveProgress() {
 
-    console.log("actions:");
-    console.log(counterActionsObj.counterActions);
-
     var iframe = document.getElementById("moodle-iframe");
-    var statTotal = iframe.contentWindow.document.getElementsByClassName("health-bar")[0];
 
     var healthBarValue = iframe.contentWindow.document.getElementsByClassName("health-bar-real")[0];
-    var sleepBarValue = iframe.contentWindow.document.getElementsByClassName("sleep-bar-real")[0];
+    var funBarValue = iframe.contentWindow.document.getElementsByClassName("sleep-bar-real")[0];
     var fmiBarValue = iframe.contentWindow.document.getElementsByClassName("fmi-bar-real")[0];
-
-    var maxStat = iframe.contentWindow.getComputedStyle(statTotal).getPropertyValue('width');
-    maxStat = maxStat.substring(0, maxStat.length - 2);
-
-    var padding = iframe.contentWindow.getComputedStyle(statTotal, null).getPropertyValue('padding-left');
-    padding = padding.substring(0, padding.length - 2);
-
-    maxStat -= padding * 2;
 
     var currHealth = iframe.contentWindow.getComputedStyle(healthBarValue).getPropertyValue('width');
     currHealth = currHealth.substring(0, currHealth.length - 2);
 
-    var currSleep = iframe.contentWindow.getComputedStyle(sleepBarValue).getPropertyValue('width');
-    currSleep = currSleep.substring(0, currSleep.length - 2);
+    var currFun = iframe.contentWindow.getComputedStyle(funBarValue).getPropertyValue('width');
+    currFun = currFun.substring(0, currFun.length - 2);
 
     var currFmi = iframe.contentWindow.getComputedStyle(fmiBarValue).getPropertyValue('width');
     currFmi = currFmi.substring(0, currFmi.length - 2);
 
-    console.log("health is:")
-    console.log(currHealth / maxStat);
+    var url = "../backend/save-stats.php";
+ 
+    progress = "health=" + currHealth
+     + "&fun=" + currFun 
+     + "&fmi=" + currFmi 
+     + "&actions=" + counterActionsObj.counterActions 
+     + "&id=" + window.id;
 
-    console.log("sleep is:")
-    console.log(currSleep / maxStat);
-
-    console.log("fmi is:")
-    console.log(currFmi / maxStat);
-
-
-    // Заявка към php скрипт, който ще запазва прогреса
-    // Ще трябва да се добави към логин скрипта взимане на този прогрес от базата данни и инициализиране на статовете
-    var url = "../backend/save-progress.php";
-    let progress = {
-        health: currHealth / maxStat,
-        sleep: currSleep / maxStat,
-        fmi: currFmi / maxStat,
-        actions: counterActionsObj.counterActions
-    }
-    //ajax(url, { method: "POST", data: progress });
+    ajax(url, { method: "POST", data: progress });
 
 }
 
@@ -264,15 +241,14 @@ function ajax(url, settings) {
 
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
-        if (!xhr.status == 200) {
-            console.error(xhr.responseText);
-        }
+            console.log(xhr.responseText);    
     };
 
     xhr.open(settings.method || 'GET', url, /* async */ true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.send(settings.data || null);
 }
+
 ///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
 ///---------------------------------------------------------///

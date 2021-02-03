@@ -15,6 +15,9 @@ $row = $stmt->fetch();
 if ($row == false) {
     echo "Невалидно потребителско име/парола.";
 } else {
+  
+    $id = $row['id'];
     echo "Вписахте се успешно!";
+    echo $id;
 }
 ?>

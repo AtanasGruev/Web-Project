@@ -48,8 +48,12 @@ function ajax(url, settings) {
 
 var callback = function (text) {
 
-    if (text == "Вписахте се успешно!") {
+    if (text.startsWith("Вписахте се успешно!")) {
 
+
+        id = text.substring("Вписахте се успешно!".length);
+        parent.window.id = id;
+        
         //натискаме скрития бутон при логване, тук ще се прави проверка в базата данни на коя седмица е играча
         //ако е след week0 този бутон няма да се кликва
         parent.document.getElementById("hidden-signal-button").click();
