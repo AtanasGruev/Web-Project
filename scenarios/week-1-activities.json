@@ -3,17 +3,17 @@
         {
             "event": "Игра на CS",
             "statsChange": {
-                "fun": 1,
-                "health": -0.5,
-                "uni": -0.5
+                "fun": 5,
+                "health": -2,
+                "uni": -3
             }
         },
         {
             "event": "Учене",
             "statsChange": {
-                "fun": -1,
+                "fun": -3,
                 "health": 0,
-                "uni": 1
+                "uni": 4
             }
         }
     ],
@@ -21,9 +21,9 @@
         {
             "event": "Посещаване на  лекция",
             "statsChange": {
-                "fun": -1,
+                "fun": -3,
                 "health": 0,
-                "uni": 2
+                "uni": 5
             }
         },
         {
@@ -31,15 +31,15 @@
             "statsChange": {
                 "fun": 0,
                 "health": 0,
-                "uni": 1
+                "uni": 4
             }
         },
         {
             "event": "Игри в зала 100",
             "statsChange": {
-                "fun": 1,
-                "health": 0,
-                "uni": 0
+                "fun": 4,
+                "health": 2,
+                "uni": -1
             }
         }
     ]
