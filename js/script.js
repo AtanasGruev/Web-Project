@@ -69,6 +69,7 @@ function incrementActions(counterActionsObj) {
     // Това следва да се отрази на moodle статистиката и да нулира
     // седмичния прогрес
     if(counterActionsObj["counterActions"] % 10 == 0) {
+        saveProgress();
         var divsActions = document.getElementsByClassName("week-actions-div");    
         for (let i = 0; i < divsActions.length; i += 1) {
             divsActions[i].style.backgroundColor = "#39D078";
@@ -136,6 +137,14 @@ function loadWeek0Events(result, eventNumber) {
         loadWeek0Events(result, eventNumber + 1);
     })
 
+    hiddenSignalButton = document.createElement("button");
+    hiddenSignalButton.style.visibility = "hidden";
+    hiddenSignalButton.id = "hidden-signal-button-two";
+    modalTitle.appendChild(hiddenSignalButton);
+
+    hiddenSignalButton.addEventListener('click', () => {
+        activateWeek0Events([], 1);
+    })
 
     setTimeout(() => { openModal(modal) }, 1000);
     
@@ -153,6 +162,12 @@ function activateWeek0Events(result, eventNumber) {
         document.getElementById("locations-activities").style.visibility = "visible";
         document.getElementById("narration").style.visibility = "visible";
 
+        counterActionsObj.counterActions = window.actions;
+        console.log(counterActionsObj.counterActions);
+
+        if(result.length == 0) { 
+            updateMoodleText(); 
+        }
         return null;
     }
 
@@ -206,7 +221,7 @@ function activateWeek0Events(result, eventNumber) {
 ///-----------------ЗАПАЗВАНЕ НА ПРОГРЕС--------------------///
 
 //saveProgress се извиква при затваряне/презареждане на страницата
-window.addEventListener("unload", saveProgress);
+//window.addEventListener("unload", saveProgress);
 
 function saveProgress() {
 
@@ -378,6 +393,18 @@ transitionFlagObj = {transition : false, notification: false};
 clockIndexObj = {clockIndex : 0};
 dayNightFlagObj = {night : false};
 
+
+function updateMoodleText() {
+    if (counterActionsObj["counterActions"] % 10 == 0) {
+        var moodleWeek = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("week-notification")[0];
+        var listWeekNotifications = ["Доживя до седмица ", "Настъпи седмица ", "Ето я и новата седмица", "Все някак добута до седмица", 
+                                    "Семестърът няма край! Седмица", "Ох, само да мине и седмица", "Хайде нека малко поолекне със седмица"];
+
+        var indexWeekMessage = Math.floor(Math.random() * listWeekNotifications.length);
+        moodleWeek.innerHTML = listWeekNotifications[indexWeekMessage] + " " + (counterActionsObj["counterActions"] / 10 + 1) + "!"; 
+    }
+}
+
 function actionButtonClicked(event, action) {
     if (!transitionFlagObj["transition"]) {
 
@@ -385,14 +412,7 @@ function actionButtonClicked(event, action) {
         incrementActions(counterActionsObj);
         counterActionsObj["counterActions"]++;
 
-        if (counterActionsObj["counterActions"] % 10 == 0) {
-            var moodleWeek = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("week-notification")[0];
-            var listWeekNotifications = ["Доживя до седмица ", "Настъпи седмица ", "Ето я и новата седмица", "Все някак добута до седмица", 
-                                        "Семестърът няма край! Седмица", "Ох, само да мине и седмица", "Хайде нека малко поолекне със седмица"];
-
-            var indexWeekMessage = Math.floor(Math.random() * listWeekNotifications.length);
-            moodleWeek.innerHTML = listWeekNotifications[indexWeekMessage] + " " + (counterActionsObj["counterActions"] / 10 + 1) + "!"; 
-        }
+       updateMoodleText();
 
         // Връзваме натискането на бутоните за действия с bars от moodle полето
         // Това е на ниво БУТОНИ ЗА ДЕЙСТВИЯ!
@@ -689,7 +709,9 @@ toggleMode.onclick = () => {
 // Main() функционалност
 (function () {
 
+    
     parseBeginning(0);
+
     for(let i = 1; i < 2; i++) {
         parseWeek(i);
         /// FIX counterActionsObj to change week ...

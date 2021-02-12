@@ -56,7 +56,7 @@ var callback = function (text) {
         
         //натискаме скрития бутон при логване, тук ще се прави проверка в базата данни на коя седмица е играча
         //ако е след week0 този бутон няма да се кликва
-        parent.document.getElementById("hidden-signal-button").click();
+        // parent.document.getElementById("hidden-signal-button").click();
 
         window.location = "../html/moodle-main.html";
 

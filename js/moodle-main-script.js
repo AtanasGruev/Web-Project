@@ -25,11 +25,20 @@ function callback(text) {
     funBarValue.style.width = stats.fun + "px";
     fmiBarValue.style.width = stats.uni + "px";
 
+   parent.window.actions = stats.actions;
+
+   if(stats.actions == 0) {
+    parent.document.getElementById("hidden-signal-button").click();
+   } else {
+    parent.document.getElementById("hidden-signal-button-two").click();
+   }
+
 }
 
 
 (function(){
 
+    
     var url = "../backend/get-stats.php";
     console.log("id is " + parent.window.id);
 
