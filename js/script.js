@@ -240,16 +240,21 @@ function saveProgress() {
     var currFmi = iframe.contentWindow.getComputedStyle(fmiBarValue).getPropertyValue('width');
     currFmi = currFmi.substring(0, currFmi.length - 2);
 
+   updateStats(currHealth, currFun, currFmi, counterActionsObj.counterActions );
+
+}
+
+function updateStats(currHealth, currFun, currFmi, actions) {
+
     var url = "../backend/save-stats.php";
  
     progress = "health=" + currHealth
      + "&fun=" + currFun 
      + "&fmi=" + currFmi 
-     + "&actions=" + counterActionsObj.counterActions 
+     + "&actions=" + actions
      + "&id=" + window.id;
 
     ajax(url, { method: "POST", data: progress });
-
 }
 
 function ajax(url, settings) {
@@ -396,6 +401,8 @@ dayNightFlagObj = {night : false};
 
 function endGame(reason) {
 
+    updateStats(170, 194.4, 20, 0);
+
     transitionFlagObj.notification = true;
     openModal(modal);
     modalTitle.innerHTML = 'Край!';
@@ -418,6 +425,8 @@ function endGame(reason) {
     //да ресетва, да трие от базата, да показва ли ранкиране?
     //засега просто затваря страницата
     console.log("game over");
+
+    
 
     window.open(window.location, '_self').top.close();
     });
