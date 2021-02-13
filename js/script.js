@@ -394,6 +394,37 @@ clockIndexObj = {clockIndex : 0};
 dayNightFlagObj = {night : false};
 
 
+function endGame(reason) {
+
+    transitionFlagObj.notification = true;
+    openModal(modal);
+    modalTitle.innerHTML = 'Край!';
+    var message;
+    switch(reason) {
+        case "health": message = "Нездравословният ти начин на живот си каза думата..."; break;
+        case "fun" : message = "Не може да се живее без забавление от време на време...За съжаление умря от скука"; break;
+        case "fmi" : message = "Изпусна прекалено много материал...Никакъв шанс да успееш да наваксаш през сесията, направо по-добре да дропаутнеш"; break;
+    }
+
+    modalBody.innerHTML = message;
+    modalFooter.innerHTML = "";
+
+    var optButton = document.createElement("button");
+    optButton.innerHTML = "Започни отначало";
+    modalFooter.appendChild(optButton);
+
+    optButton.addEventListener('click', () => {
+      
+    //да ресетва, да трие от базата, да показва ли ранкиране?
+    //засега просто затваря страницата
+    console.log("game over");
+
+    window.open(window.location, '_self').top.close();
+    });
+
+}
+
+
 function updateMoodleText() {
     if (counterActionsObj["counterActions"] % 10 == 0) {
         var moodleWeek = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("week-notification")[0];
@@ -442,17 +473,26 @@ function actionButtonClicked(event, action) {
 
         var newHealth = healthBarReal.offsetWidth + healthStats * widthPercent;
         if (Math.round(newHealth) > maxWidth - 8) newHealth = maxWidth - 8;
-        else if(Math.round(newHealth) <= 0) newHealth = 0; // Имплементираме логика -- ГУБИТЕ ИГРАТА!    
+        else if(Math.round(newHealth) <= 0) {
+            newHealth = 0;
+            endGame("health");
+        } // Имплементираме логика -- ГУБИТЕ ИГРАТА!    
         healthBarReal.style.width = Math.round(newHealth) + "px";
         
         var newFun = funBarReal.offsetWidth + funStats * widthPercent;
         if (Math.round(newFun) > maxWidth - 8) newFun = maxWidth - 8;
-        else if(Math.round(newFun) <= 0) newFun = 0; // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+        else if(Math.round(newFun) <= 0) { 
+            newFun = 0;
+            endGame("fun");
+         }// Имплементираме логика -- ГУБИТЕ ИГРАТА! 
         funBarReal.style.width = Math.round(newFun) + "px";
         
         var newFmi = fmiBarReal.offsetWidth + fmiStats * widthPercent;
         if (Math.round(newFmi) > maxWidth - 8) newFmi = maxWidth - 8;
-        else if(Math.round(newFmi) <= 0) newFmi = 0; // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+        else if(Math.round(newFmi) <= 0) {
+            newFmi = 0;
+            endGame("fmi");
+        } // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
         fmiBarReal.style.width = Math.round(newFmi) + "px";
 
         // Флагът за извършвано действие се вдига
@@ -570,17 +610,26 @@ function notificationsWeek1(result) {
 
                                         var newHealth = healthBarReal.offsetWidth + healthStats * widthPercent;
                                         if (Math.round(newHealth) > maxWidth - 8) newHealth = maxWidth - 8;
-                                        else if(Math.round(newHealth) <= 0) newHealth = 0; // Имплементираме логика -- ГУБИТЕ ИГРАТА!    
+                                        else if(Math.round(newHealth) <= 0) {
+                                            newHealth = 0;
+                                            endGame("health");
+                                        }// Имплементираме логика -- ГУБИТЕ ИГРАТА!    
                                         healthBarReal.style.width = Math.round(newHealth) + "px";
                                         
                                         var newFun = funBarReal.offsetWidth + funStats * widthPercent;
                                         if (Math.round(newFun) > maxWidth - 8) newFun = maxWidth - 8;
-                                        else if(Math.round(newFun) <= 0) newFun = 0; // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+                                        else if(Math.round(newFun) <= 0) {
+                                            newFun = 0;
+                                            endGame("fun");
+                                        }// Имплементираме логика -- ГУБИТЕ ИГРАТА! 
                                         funBarReal.style.width = Math.round(newFun) + "px";
                                         
                                         var newFmi = fmiBarReal.offsetWidth + fmiStats * widthPercent;
                                         if (Math.round(newFmi) > maxWidth - 8) newFmi = maxWidth - 8;
-                                        else if(Math.round(newFmi) <= 0) newFmi = 0; // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+                                        else if(Math.round(newFmi) <= 0) {
+                                            newFmi = 0;
+                                            endGame("fmi");
+                                        } // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
                                         fmiBarReal.style.width = Math.round(newFmi) + "px";
                                 })
                                 modalFooter.appendChild(optButton);
