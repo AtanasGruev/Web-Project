@@ -12,8 +12,8 @@
             "event": "Учене",
             "statsChange": {
                 "fun": -3,
-                "health": 0,
-                "uni": 4
+                "health": -1,
+                "uni": 3
             }
         }
     ],
@@ -22,24 +22,24 @@
             "event": "Посещаване на  лекция",
             "statsChange": {
                 "fun": -3,
-                "health": 0,
-                "uni": 5
+                "health": -1,
+                "uni": 3
             }
         },
         {
             "event": "Посещаване на упражнение",
             "statsChange": {
-                "fun": 0,
-                "health": 0,
-                "uni": 4
+                "fun": -2,
+                "health": -1,
+                "uni": 3
             }
         },
         {
             "event": "Игри в зала 100",
             "statsChange": {
                 "fun": 4,
-                "health": 2,
-                "uni": -1
+                "health": 0,
+                "uni": -2
             }
         }
     ]

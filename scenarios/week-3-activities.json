@@ -23,11 +23,19 @@
                 "health": 1,
                 "uni": -4
             }
+        },
+        {
+            "event": "Фитнес",
+            "statsChange": {
+                "fun": 1,
+                "health": 5,
+                "uni": -2
+            }
         }
     ],
     "ФМИ": [
         {
-            "event": "Посещаване на  лекция",
+            "event": "Посещаване на лекция",
             "statsChange": {
                 "fun": -3,
                 "health": 0,

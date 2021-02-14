@@ -123,7 +123,6 @@ function loadWeek0Events(result, eventNumber) {
         } else {
             closeModal(modal);
         }
-
     })
 
     // Създава се скрит бутон
@@ -240,7 +239,7 @@ function saveProgress() {
     var currFmi = iframe.contentWindow.getComputedStyle(fmiBarValue).getPropertyValue('width');
     currFmi = currFmi.substring(0, currFmi.length - 2);
 
-   updateStats(currHealth, currFun, currFmi, counterActionsObj.counterActions );
+   updateStats(currHealth, currFun, currFmi, counterActionsObj.counterActions);
 
 }
 
@@ -276,13 +275,26 @@ function ajax(url, settings) {
 
 // Чете json файлове и вика подходящи функции
 function parseWeek(weekNum) {
-    console.log(weekNum);
-    fetch("../scenarios/week-"+ weekNum + "-activities.json")
+    
+    //console.log(weekNum);
+    if(weekNum > 1) {
+        const interface = document.getElementById("locations-activities");
+        while(interface.firstChild) {
+            interface.removeChild(interface.lastChild);
+        }
+    }
+
+    if(weekNum >5) {
+        endGame("over");
+    } else {
+        notificationsSeenObj["notificationsSeen"] = [];        
+        fetch("../scenarios/week-"+ weekNum + "-activities.json")
         .then(data => data.json())
-        .then(result => activitiesWeek1(result, weekNum))
+        .then(result => activitiesWeek(result, weekNum))
+    }
 }
 
-function activitiesWeek1(result, weekNum) {
+function activitiesWeek(result, weekNum) {
     for (let location in result) {
         // За взимане индекс на часовник при инвертиране на toggle
         
@@ -330,7 +342,7 @@ function activitiesWeek1(result, weekNum) {
             actButton.innerHTML = result[location][i]["event"];
             actDiv.appendChild(actButton);
 
-            // Допълвваме с иконка за часовник
+            // Допълваме с иконка за часовник
             var clockIconDay = document.createElement("img");
             var clockIconNight = document.createElement("img");
 
@@ -364,7 +376,7 @@ function activitiesWeek1(result, weekNum) {
     // Прочитаме notifications за седмицата и ги връзваме с бутоните, narrations и bars
     fetch("../scenarios/week-"+ weekNum + "-notifications.json")
         .then(data => data.json())
-        .then(result => notificationsWeek1(result))
+        .then(result => notificationsWeek(result))
 }
 
 function locationButtonClicked(event, location) {
@@ -408,9 +420,10 @@ function endGame(reason) {
     modalTitle.innerHTML = 'Край!';
     var message;
     switch(reason) {
-        case "health": message = "Нездравословният ти начин на живот си каза думата..."; break;
-        case "fun" : message = "Не може да се живее без забавление от време на време...За съжаление умря от скука"; break;
-        case "fmi" : message = "Изпусна прекалено много материал...Никакъв шанс да успееш да наваксаш през сесията, направо по-добре да дропаутнеш"; break;
+        case "health": message = "Нездравословният ти начин на живот си каза думата - разви тумор на мозъка!"; break;
+        case "fun" : message = "Не може да се живее без забавление от време на време... Толкова си нещастен, че се самоубиваш!"; break;
+        case "fmi" : message = "Изпусна прекалено много материал... Няма никакъв шанс да успееш да наваксаш през сесията, тоя семестър е провал!"; break;
+        case "over" : message = "Засега толкова! Благодаря, че играхте в нашия ФМИ семестриален симулатор, надяваме се да ви е харесал! Ако искате да продължим разработването на играта и да добавим още сценарии (седмици, семестри). моля помислете да ни подкрепите финансово на нашият IBAN: BG18RZBB91550123456789."
     }
 
     modalBody.innerHTML = message;
@@ -426,13 +439,10 @@ function endGame(reason) {
     //засега просто затваря страницата
     console.log("game over");
 
-    
-
     window.open(window.location, '_self').top.close();
     });
 
 }
-
 
 function updateMoodleText() {
     if (counterActionsObj["counterActions"] % 10 == 0) {
@@ -442,11 +452,22 @@ function updateMoodleText() {
 
         var indexWeekMessage = Math.floor(Math.random() * listWeekNotifications.length);
         moodleWeek.innerHTML = listWeekNotifications[indexWeekMessage] + " " + (counterActionsObj["counterActions"] / 10 + 1) + "!"; 
+
+        if(transitionFlagObj["transition"]) {
+            setTimeout(function() {
+                parseWeek((counterActionsObj["counterActions"] / 10 + 1));
+            }, 6500)
+        } else {
+            parseWeek((counterActionsObj["counterActions"] / 10 + 1));
+        }
     }
 }
 
 function actionButtonClicked(event, action) {
     if (!transitionFlagObj["transition"]) {
+
+        // Флагът за извършвано действие се вдига
+        transitionFlagObj["transition"] = true;
 
         // Връзка с брояч на действия през седмицата
         incrementActions(counterActionsObj);
@@ -504,9 +525,6 @@ function actionButtonClicked(event, action) {
         } // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
         fmiBarReal.style.width = Math.round(newFmi) + "px";
 
-        // Флагът за извършвано действие се вдига
-        transitionFlagObj["transition"] = true;
-
         // Симулация на времетраене - правим часовника видим и го анимираме
         var activityClock = event.currentTarget.parentNode.getElementsByClassName("activities-clock")[0];
         activityClock.style.visibility = "visible"; // часовникът става видим
@@ -549,7 +567,9 @@ function actionButtonClicked(event, action) {
     }
 }
 
-function notificationsWeek1(result) {
+notificationsSeenObj = {notificationsSeen: []};
+
+function notificationsWeek(result) {
     // За всеки бутон добавяме по още един eventListener()
     // За всеки бутон ще взмемем възможните notifications, които да се
     // случат при такова събитие, и ще ги вържем с другите неща
@@ -561,9 +581,6 @@ function notificationsWeek1(result) {
             actButton.addEventListener("click", function() {
                 if(!transitionFlagObj["notification"]) {
 
-                    // кое съобщение ще излезе
-                    var randomNotification = Math.floor(Math.random() * result[location][activity].length);
-
                     // вероятност за получаване на съобщение
                     var flagNotification = false;
                     if (Math.random() > 0.25) flagNotification = true;
@@ -574,9 +591,28 @@ function notificationsWeek1(result) {
 
                     // Понякога ще се появяват известия с избори, понякога - не
                     if (flagNotification) {
+
+                        var randomNotification = Math.floor(Math.random() * result[location][activity].length);
+
+                        // Не допускаме събитията от лекции да се повтарят
+                        if(activity == "Посещаване на лекция") {
+                            
+                            if (notificationsSeenObj["notificationsSeen"].length != result[location][activity].length) {
+                                while (notificationsSeenObj["notificationsSeen"].includes(result[location][activity][randomNotification]["eventNumber"])) {
+                                    // кое съобщение ще излезе
+                                    var randomNotification = Math.floor(Math.random() * result[location][activity].length);
+                                }
+                            } else {
+                                notificationsSeenObj["notificationsSeen"] = []
+                            }
+
+                            notificationsSeenObj["notificationsSeen"].push(result[location][activity][randomNotification]["eventNumber"])
+                        }
+
                         // Изчакване преди появата на notification
                         setTimeout(function() {
                             var action = result[location][activity][randomNotification];
+
                             openModal(modal);
                             modalTitle.innerHTML = action["eventHeader"];
                             modalBody.innerHTML = action["event"];
@@ -589,6 +625,14 @@ function notificationsWeek1(result) {
                                 optButton.innerHTML = action["options"][i]["text"];
 
                                 optButton.addEventListener("click", function() {
+
+                                        // Unhappy ending (fire)
+                                        if(counterActionsObj["counterActions"] > 40 && i == 1 && randomNotification == 9) {
+                                            // endGame("fire");
+                                        } else if(counterActionsObj["counterActions"] > 40 && i == 2 && randomNotification == 8) {
+                                            // endGame("neck");
+                                        }
+
                                         // Да изведем response на #narration
                                         var messageDiv = document.createElement("div");
                                         messageDiv.setAttribute("class", "narration-response");
@@ -766,13 +810,11 @@ toggleMode.onclick = () => {
 
 // Main() функционалност
 (function () {
-
     
+    // Fetch forced notifications
+    // fetch("../scenarios/forced-notifications.json")
+    // .then(data => ) JSON.parse()
     parseBeginning(0);
-
-    for(let i = 1; i < 2; i++) {
-        parseWeek(i);
-        /// FIX counterActionsObj to change week ...
-    }
+    parseWeek(1);
 })();
 
