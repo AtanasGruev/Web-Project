@@ -34,7 +34,7 @@ function closeModal(modal) {
 
     //засега тук, може и да е ненужно
     var moodle = document.getElementById('moodle-container')
-    moodle.style.visibility="visible";
+    moodle.style.visibility = "visible";
 }
 ///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
@@ -45,7 +45,7 @@ var narrationQueue = []; // държим си съобщенията от #narra
 // Добавяне на уведомление в полето #narration
 function printMessage(message) {
     var narrationField = document.getElementById("narration");
-    
+
     var messageDiv = document.createElement("div");
     messageDiv.innerHTML = message;
 
@@ -68,20 +68,20 @@ function incrementActions(counterActionsObj) {
     // Ако counterActions % 10 == 0, то сме приключили седмицата
     // Това следва да се отрази на moodle статистиката и да нулира
     // седмичния прогрес
-    if(counterActionsObj["counterActions"] % 10 == 0) {
+    if (counterActionsObj["counterActions"] % 10 == 0) {
         saveProgress();
-        var divsActions = document.getElementsByClassName("week-actions-div");    
+        var divsActions = document.getElementsByClassName("week-actions-div");
         for (let i = 0; i < divsActions.length; i += 1) {
             divsActions[i].style.backgroundColor = "#39D078";
             divsActions[i].style.boxShadow = "none";
         }
-        var currAction = document.getElementById("action-" + (counterActionsObj["counterActions"]) % 10);   
+        var currAction = document.getElementById("action-" + (counterActionsObj["counterActions"]) % 10);
         currAction.style.backgroundColor = "#007CFF";
-        currAction.style.boxShadow = "0 0 10px #39D078"; 
+        currAction.style.boxShadow = "0 0 10px #39D078";
     } else {
-        var currAction = document.getElementById("action-" + (counterActionsObj["counterActions"]) % 10);   
+        var currAction = document.getElementById("action-" + (counterActionsObj["counterActions"]) % 10);
         currAction.style.backgroundColor = "#007CFF";
-        currAction.style.boxShadow = "0 0 10px #39D078"; 
+        currAction.style.boxShadow = "0 0 10px #39D078";
     }
 }
 ///------------------XXXXXXXXXXXXXXXXXX---------------------///
@@ -104,7 +104,7 @@ function parseBeginning(eventNumber) {
 
 // Подготовка на интерфейс в седмица 0
 function loadWeek0Events(result, eventNumber) {
-  
+
     // Четем събитията от json файла
     modalTitle.innerHTML = result[eventNumber].eventHeader;
     modalBody.innerHTML = result[eventNumber].event;
@@ -146,7 +146,7 @@ function loadWeek0Events(result, eventNumber) {
     })
 
     setTimeout(() => { openModal(modal) }, 1000);
-    
+
 }
 
 // 
@@ -164,11 +164,15 @@ function activateWeek0Events(result, eventNumber) {
         counterActionsObj.counterActions = window.actions;
         console.log(counterActionsObj.counterActions);
 
-        if(result.length == 0) { 
-            updateMoodleText(); 
+        forceAction(counterActionsObj.counterActions/10);
+
+        if (result.length == 0) {
+            updateMoodleText();
         }
         return null;
     }
+
+    forceAction(0);
 
     modalTitle.innerHTML = result[eventNumber].eventHeader;
     modalBody.innerHTML = result[eventNumber].event;
@@ -239,19 +243,19 @@ function saveProgress() {
     var currFmi = iframe.contentWindow.getComputedStyle(fmiBarValue).getPropertyValue('width');
     currFmi = currFmi.substring(0, currFmi.length - 2);
 
-   updateStats(currHealth, currFun, currFmi, counterActionsObj.counterActions);
+    updateStats(currHealth, currFun, currFmi, counterActionsObj.counterActions);
 
 }
 
 function updateStats(currHealth, currFun, currFmi, actions) {
 
     var url = "../backend/save-stats.php";
- 
+
     progress = "health=" + currHealth
-     + "&fun=" + currFun 
-     + "&fmi=" + currFmi 
-     + "&actions=" + actions
-     + "&id=" + window.id;
+        + "&fun=" + currFun
+        + "&fmi=" + currFmi
+        + "&actions=" + actions
+        + "&id=" + window.id;
 
     ajax(url, { method: "POST", data: progress });
 }
@@ -260,7 +264,7 @@ function ajax(url, settings) {
 
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
-            console.log(xhr.responseText);    
+        console.log(xhr.responseText);
     };
 
     xhr.open(settings.method || 'GET', url, /* async */ true);
@@ -275,29 +279,29 @@ function ajax(url, settings) {
 
 // Чете json файлове и вика подходящи функции
 function parseWeek(weekNum) {
-    
+
     //console.log(weekNum);
-    if(weekNum > 1) {
+    if (weekNum > 1) {
         const interface = document.getElementById("locations-activities");
-        while(interface.firstChild) {
+        while (interface.firstChild) {
             interface.removeChild(interface.lastChild);
         }
     }
 
-    if(weekNum >5) {
+    if (weekNum > 5) {
         endGame("over");
     } else {
-        notificationsSeenObj["notificationsSeen"] = [];        
-        fetch("../scenarios/week-"+ weekNum + "-activities.json")
-        .then(data => data.json())
-        .then(result => activitiesWeek(result, weekNum))
+        notificationsSeenObj["notificationsSeen"] = [];
+        fetch("../scenarios/week-" + weekNum + "-activities.json")
+            .then(data => data.json())
+            .then(result => activitiesWeek(result, weekNum))
     }
 }
 
 function activitiesWeek(result, weekNum) {
     for (let location in result) {
         // За взимане индекс на часовник при инвертиране на toggle
-        
+
         // Подготовка на бутоните за локации
         var locationsDiv = document.getElementById("locations-activities");
 
@@ -318,10 +322,10 @@ function activitiesWeek(result, weekNum) {
         locButton.setAttribute("class", "week-locations-button");
         locButton.setAttribute("id", location.replace(/\s+/g, ''));
         locButton.innerHTML = location;
-        locationsPlacementDiv.appendChild(locButton); 
+        locationsPlacementDiv.appendChild(locButton);
 
         // Ако се натисне локация, показват се възможни действия
-        locButton.addEventListener('click', function(event) {
+        locButton.addEventListener('click', function (event) {
             locationButtonClicked(event, location);
         })
 
@@ -351,14 +355,14 @@ function activitiesWeek(result, weekNum) {
             clockIconDay.setAttribute("class", "activities-clock");
             clockIconNight.setAttribute("class", "activities-clock");
 
-            if(counterToggle % 2 == 0) {
-                if(actDiv.childNodes.length == 2) {
+            if (counterToggle % 2 == 0) {
+                if (actDiv.childNodes.length == 2) {
                     actDiv.removeChild(actDiv.childNodes[1]);
                 }
                 actDiv.appendChild(clockIconDay);
             }
             else {
-                if(actDiv.childNodes.length == 2) {
+                if (actDiv.childNodes.length == 2) {
                     actDiv.removeChild(actDiv.childNodes[1]);
                 }
                 actDiv.appendChild(clockIconNight);
@@ -366,7 +370,7 @@ function activitiesWeek(result, weekNum) {
 
             activitiesPlacementDiv.appendChild(actDiv);
 
-            actButton.addEventListener('click', function(event) {    
+            actButton.addEventListener('click', function (event) {
                 var action = result[location][i];
                 actionButtonClicked(event, action);
             })
@@ -374,7 +378,7 @@ function activitiesWeek(result, weekNum) {
     }
 
     // Прочитаме notifications за седмицата и ги връзваме с бутоните, narrations и bars
-    fetch("../scenarios/week-"+ weekNum + "-notifications.json")
+    fetch("../scenarios/week-" + weekNum + "-notifications.json")
         .then(data => data.json())
         .then(result => notificationsWeek(result))
 }
@@ -406,9 +410,9 @@ function locationButtonClicked(event, location) {
 }
 
 // Ако действие се извършва, с този флаг забраняваме достъп до бутоните
-transitionFlagObj = {transition : false, notification: false};
-clockIndexObj = {clockIndex : 0};
-dayNightFlagObj = {night : false};
+transitionFlagObj = { transition: false, notification: false };
+clockIndexObj = { clockIndex: 0 };
+dayNightFlagObj = { night: false };
 
 
 function endGame(reason) {
@@ -419,11 +423,14 @@ function endGame(reason) {
     openModal(modal);
     modalTitle.innerHTML = 'Край!';
     var message;
-    switch(reason) {
+    switch (reason) {
         case "health": message = "Нездравословният ти начин на живот си каза думата - разви тумор на мозъка!"; break;
-        case "fun" : message = "Не може да се живее без забавление от време на време... Толкова си нещастен, че се самоубиваш!"; break;
-        case "fmi" : message = "Изпусна прекалено много материал... Няма никакъв шанс да успееш да наваксаш през сесията, тоя семестър е провал!"; break;
-        case "over" : message = "Засега толкова! Благодаря, че играхте в нашия ФМИ семестриален симулатор, надяваме се да ви е харесал! Ако искате да продължим разработването на играта и да добавим още сценарии (седмици, семестри). моля помислете да ни подкрепите финансово на нашият IBAN: BG18RZBB91550123456789."
+        case "fun": message = "Не може да се живее без забавление от време на време... Толкова си нещастен, че се самоубиваш!"; break;
+        case "fmi": message = "Изпусна прекалено много материал... Няма никакъв шанс да успееш да наваксаш през сесията, тоя семестър е провал!"; break;
+        case "over": message = "Засега толкова! Благодаря, че играхте в нашия ФМИ семестриален симулатор, надяваме се да ви е харесал! Ако искате да продължим разработването на играта и да добавим още сценарии (седмици, семестри). моля помислете да ни подкрепите финансово на нашият IBAN: BG18RZBB91550123456789."
+        case "fire": message = "Опитваш се да се измъкнеш, но пламъците са навсякъде... умираш в агония."
+        case "neck": message = "В бързината си се подхлъзваш на стълбите и политаш надолу. Падаш на главата си и си чупиш врата."
+
     }
 
     modalBody.innerHTML = message;
@@ -434,12 +441,12 @@ function endGame(reason) {
     modalFooter.appendChild(optButton);
 
     optButton.addEventListener('click', () => {
-      
-    //да ресетва, да трие от базата, да показва ли ранкиране?
-    //засега просто затваря страницата
-    console.log("game over");
 
-    window.open(window.location, '_self').top.close();
+        //да ресетва, да трие от базата, да показва ли ранкиране?
+        //засега просто затваря страницата
+        console.log("game over");
+
+        window.open(window.location, '_self').top.close();
     });
 
 }
@@ -447,14 +454,14 @@ function endGame(reason) {
 function updateMoodleText() {
     if (counterActionsObj["counterActions"] % 10 == 0) {
         var moodleWeek = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("week-notification")[0];
-        var listWeekNotifications = ["Доживя до седмица ", "Настъпи седмица ", "Ето я и новата седмица", "Все някак добута до седмица", 
-                                    "Семестърът няма край! Седмица", "Ох, само да мине и седмица", "Хайде нека малко поолекне със седмица"];
+        var listWeekNotifications = ["Доживя до седмица ", "Настъпи седмица ", "Ето я и новата седмица", "Все някак добута до седмица",
+            "Семестърът няма край! Седмица", "Ох, само да мине и седмица", "Хайде нека малко поолекне със седмица"];
 
         var indexWeekMessage = Math.floor(Math.random() * listWeekNotifications.length);
-        moodleWeek.innerHTML = listWeekNotifications[indexWeekMessage] + " " + (counterActionsObj["counterActions"] / 10 + 1) + "!"; 
+        moodleWeek.innerHTML = listWeekNotifications[indexWeekMessage] + " " + (counterActionsObj["counterActions"] / 10 + 1) + "!";
 
-        if(transitionFlagObj["transition"]) {
-            setTimeout(function() {
+        if (transitionFlagObj["transition"]) {
+            setTimeout(function () {
                 parseWeek((counterActionsObj["counterActions"] / 10 + 1));
             }, 6500)
         } else {
@@ -473,7 +480,7 @@ function actionButtonClicked(event, action) {
         incrementActions(counterActionsObj);
         counterActionsObj["counterActions"]++;
 
-       updateMoodleText();
+        updateMoodleText();
 
         // Връзваме натискането на бутоните за действия с bars от moodle полето
         // Това е на ниво БУТОНИ ЗА ДЕЙСТВИЯ!
@@ -503,23 +510,23 @@ function actionButtonClicked(event, action) {
 
         var newHealth = healthBarReal.offsetWidth + healthStats * widthPercent;
         if (Math.round(newHealth) > maxWidth - 8) newHealth = maxWidth - 8;
-        else if(Math.round(newHealth) <= 0) {
+        else if (Math.round(newHealth) <= 0) {
             newHealth = 0;
             endGame("health");
         } // Имплементираме логика -- ГУБИТЕ ИГРАТА!    
         healthBarReal.style.width = Math.round(newHealth) + "px";
-        
+
         var newFun = funBarReal.offsetWidth + funStats * widthPercent;
         if (Math.round(newFun) > maxWidth - 8) newFun = maxWidth - 8;
-        else if(Math.round(newFun) <= 0) { 
+        else if (Math.round(newFun) <= 0) {
             newFun = 0;
             endGame("fun");
-         }// Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+        }// Имплементираме логика -- ГУБИТЕ ИГРАТА! 
         funBarReal.style.width = Math.round(newFun) + "px";
-        
+
         var newFmi = fmiBarReal.offsetWidth + fmiStats * widthPercent;
         if (Math.round(newFmi) > maxWidth - 8) newFmi = maxWidth - 8;
-        else if(Math.round(newFmi) <= 0) {
+        else if (Math.round(newFmi) <= 0) {
             newFmi = 0;
             endGame("fmi");
         } // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
@@ -543,7 +550,7 @@ function actionButtonClicked(event, action) {
             allButtons[b].style.color = "#B2B2B2";
         }
 
-        setTimeout(function() {
+        setTimeout(function () {
             activityClock.style.visibility = "hidden";
             transitionFlagObj["transition"] = false;
             transitionFlagObj["notification"] = false;
@@ -567,19 +574,19 @@ function actionButtonClicked(event, action) {
     }
 }
 
-notificationsSeenObj = {notificationsSeen: []};
+notificationsSeenObj = { notificationsSeen: [] };
 
 function notificationsWeek(result) {
     // За всеки бутон добавяме по още един eventListener()
     // За всеки бутон ще взмемем възможните notifications, които да се
     // случат при такова събитие, и ще ги вържем с другите неща
-    for(let location in result) {
+    for (let location in result) {
         for (let activity in result[location]) {
             activityReduced = activity.replace(/\s+/g, '');
             var actButton = document.getElementById(activityReduced);
 
-            actButton.addEventListener("click", function() {
-                if(!transitionFlagObj["notification"]) {
+            actButton.addEventListener("click", function () {
+                if (!transitionFlagObj["notification"]) {
 
                     // вероятност за получаване на съобщение
                     var flagNotification = false;
@@ -595,8 +602,8 @@ function notificationsWeek(result) {
                         var randomNotification = Math.floor(Math.random() * result[location][activity].length);
 
                         // Не допускаме събитията от лекции да се повтарят
-                        if(activity == "Посещаване на лекция") {
-                            
+                        if (activity == "Посещаване на лекция") {
+
                             if (notificationsSeenObj["notificationsSeen"].length != result[location][activity].length) {
                                 while (notificationsSeenObj["notificationsSeen"].includes(result[location][activity][randomNotification]["eventNumber"])) {
                                     // кое съобщение ще излезе
@@ -610,7 +617,7 @@ function notificationsWeek(result) {
                         }
 
                         // Изчакване преди появата на notification
-                        setTimeout(function() {
+                        setTimeout(function () {
                             var action = result[location][activity][randomNotification];
 
                             openModal(modal);
@@ -624,66 +631,66 @@ function notificationsWeek(result) {
                                 var optButton = document.createElement("button");
                                 optButton.innerHTML = action["options"][i]["text"];
 
-                                optButton.addEventListener("click", function() {
+                                optButton.addEventListener("click", function () {
 
-                                        // Unhappy ending (fire)
-                                        if(counterActionsObj["counterActions"] > 40 && i == 1 && randomNotification == 9) {
-                                            // endGame("fire");
-                                        } else if(counterActionsObj["counterActions"] > 40 && i == 2 && randomNotification == 8) {
-                                            // endGame("neck");
-                                        }
+                                    // Unhappy ending (fire)
+                                    if (counterActionsObj["counterActions"] > 40 && i == 1 && randomNotification == 9) {
+                                         endGame("fire");
+                                    } else if (counterActionsObj["counterActions"] > 40 && i == 2 && randomNotification == 8) {
+                                         endGame("neck");
+                                    }
 
-                                        // Да изведем response на #narration
-                                        var messageDiv = document.createElement("div");
-                                        messageDiv.setAttribute("class", "narration-response");
-                                        messageDiv.innerHTML = action["options"][i]["response"];
-                                        narrationField.prepend(messageDiv);
-                                        closeModal(modal);
+                                    // Да изведем response на #narration
+                                    var messageDiv = document.createElement("div");
+                                    messageDiv.setAttribute("class", "narration-response");
+                                    messageDiv.innerHTML = action["options"][i]["response"];
+                                    narrationField.prepend(messageDiv);
+                                    closeModal(modal);
 
-                                        // Връзка с характеристиките от moodle полето
-                                        // Това е на ниво ИЗВЕСТИЯ!
-                                        var funStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["fun"];
-                                        var healthStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["health"];
-                                        var fmiStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["uni"];
+                                    // Връзка с характеристиките от moodle полето
+                                    // Това е на ниво ИЗВЕСТИЯ!
+                                    var funStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["fun"];
+                                    var healthStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["health"];
+                                    var fmiStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["uni"];
 
-                                        // За здравето
-                                        var healthBar = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar")[0];
-                                        var healthBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar-real")[0];
+                                    // За здравето
+                                    var healthBar = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar")[0];
+                                    var healthBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar-real")[0];
 
-                                        // За социалния живот
-                                        var funBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("sleep-bar-real")[0];
+                                    // За социалния живот
+                                    var funBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("sleep-bar-real")[0];
 
-                                        // За университета
-                                        var fmiBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("fmi-bar-real")[0];
+                                    // За университета
+                                    var fmiBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("fmi-bar-real")[0];
 
-                                        // Можем да осъществим самата промяна
-                                        // 100 процента считаме дължината на healthBar (примерно)
-                                        var maxWidth = healthBar.offsetWidth;
-                                        var widthPercent = maxWidth / 100;
+                                    // Можем да осъществим самата промяна
+                                    // 100 процента считаме дължината на healthBar (примерно)
+                                    var maxWidth = healthBar.offsetWidth;
+                                    var widthPercent = maxWidth / 100;
 
-                                        var newHealth = healthBarReal.offsetWidth + healthStats * widthPercent;
-                                        if (Math.round(newHealth) > maxWidth - 8) newHealth = maxWidth - 8;
-                                        else if(Math.round(newHealth) <= 0) {
-                                            newHealth = 0;
-                                            endGame("health");
-                                        }// Имплементираме логика -- ГУБИТЕ ИГРАТА!    
-                                        healthBarReal.style.width = Math.round(newHealth) + "px";
-                                        
-                                        var newFun = funBarReal.offsetWidth + funStats * widthPercent;
-                                        if (Math.round(newFun) > maxWidth - 8) newFun = maxWidth - 8;
-                                        else if(Math.round(newFun) <= 0) {
-                                            newFun = 0;
-                                            endGame("fun");
-                                        }// Имплементираме логика -- ГУБИТЕ ИГРАТА! 
-                                        funBarReal.style.width = Math.round(newFun) + "px";
-                                        
-                                        var newFmi = fmiBarReal.offsetWidth + fmiStats * widthPercent;
-                                        if (Math.round(newFmi) > maxWidth - 8) newFmi = maxWidth - 8;
-                                        else if(Math.round(newFmi) <= 0) {
-                                            newFmi = 0;
-                                            endGame("fmi");
-                                        } // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
-                                        fmiBarReal.style.width = Math.round(newFmi) + "px";
+                                    var newHealth = healthBarReal.offsetWidth + healthStats * widthPercent;
+                                    if (Math.round(newHealth) > maxWidth - 8) newHealth = maxWidth - 8;
+                                    else if (Math.round(newHealth) <= 0) {
+                                        newHealth = 0;
+                                        endGame("health");
+                                    }// Имплементираме логика -- ГУБИТЕ ИГРАТА!    
+                                    healthBarReal.style.width = Math.round(newHealth) + "px";
+
+                                    var newFun = funBarReal.offsetWidth + funStats * widthPercent;
+                                    if (Math.round(newFun) > maxWidth - 8) newFun = maxWidth - 8;
+                                    else if (Math.round(newFun) <= 0) {
+                                        newFun = 0;
+                                        endGame("fun");
+                                    }// Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+                                    funBarReal.style.width = Math.round(newFun) + "px";
+
+                                    var newFmi = fmiBarReal.offsetWidth + fmiStats * widthPercent;
+                                    if (Math.round(newFmi) > maxWidth - 8) newFmi = maxWidth - 8;
+                                    else if (Math.round(newFmi) <= 0) {
+                                        newFmi = 0;
+                                        endGame("fmi");
+                                    } // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+                                    fmiBarReal.style.width = Math.round(newFmi) + "px";
                                 })
                                 modalFooter.appendChild(optButton);
                             }
@@ -806,14 +813,101 @@ toggleMode.onclick = () => {
     counterToggle++;
 }
 
+
+forcedNotificationAction = [9, 15, 27]
+var forcedActions;
+
+
+function loadForcedActions() {
+    fetch("../scenarios/forced-notifications.json")
+        .then(data => data.json())
+        .then(result => { forcedActions = result; })
+}
+
+function forceAction(week) {
+
+    if (counterActionsObj.counterActions == forcedNotificationAction[week] && !transitionFlagObj.transition) {
+        openModal(modal);
+        modalTitle.innerHTML = forcedActions[week].eventHeader;
+        modalBody.innerHTML = forcedActions[week].event;
+        modalFooter.innerHTML = "";
+
+        var narrationField = document.getElementById("narration");
+
+        for (let i in forcedActions[week]["options"]) {
+            var optButton = document.createElement("button");
+            optButton.innerHTML = forcedActions[week]["options"][i]["text"];
+
+            optButton.addEventListener("click", function () {
+
+                // Да изведем response на #narration
+                var messageDiv = document.createElement("div");
+                messageDiv.setAttribute("class", "narration-response");
+                messageDiv.innerHTML =forcedActions[week]["options"][i]["response"];
+                narrationField.prepend(messageDiv);
+                closeModal(modal);
+
+                // Това е на ниво ИЗВЕСТИЯ!
+                var funStats = forcedActions[week]["options"][i]["statsChange"]["fun"];
+                var healthStats = forcedActions[week]["options"][i]["statsChange"]["health"];
+                var fmiStats = forcedActions[week]["options"][i]["statsChange"]["uni"];
+
+                // За здравето
+                var healthBar = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar")[0];
+                var healthBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar-real")[0];
+
+                // За социалния живот
+                var funBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("sleep-bar-real")[0];
+
+                // За университета
+                var fmiBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("fmi-bar-real")[0];
+
+                // Можем да осъществим самата промяна
+                // 100 процента считаме дължината на healthBar (примерно)
+                var maxWidth = healthBar.offsetWidth;
+                var widthPercent = maxWidth / 100;
+
+                var newHealth = healthBarReal.offsetWidth + healthStats * widthPercent;
+                if (Math.round(newHealth) > maxWidth - 8) newHealth = maxWidth - 8;
+                else if (Math.round(newHealth) <= 0) {
+                    newHealth = 0;
+                    endGame("health");
+                }// Имплементираме логика -- ГУБИТЕ ИГРАТА!    
+                healthBarReal.style.width = Math.round(newHealth) + "px";
+
+                var newFun = funBarReal.offsetWidth + funStats * widthPercent;
+                if (Math.round(newFun) > maxWidth - 8) newFun = maxWidth - 8;
+                else if (Math.round(newFun) <= 0) {
+                    newFun = 0;
+                    endGame("fun");
+                }// Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+                funBarReal.style.width = Math.round(newFun) + "px";
+
+                var newFmi = fmiBarReal.offsetWidth + fmiStats * widthPercent;
+                if (Math.round(newFmi) > maxWidth - 8) newFmi = maxWidth - 8;
+                else if (Math.round(newFmi) <= 0) {
+                    newFmi = 0;
+                    endGame("fmi");
+                } // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+                fmiBarReal.style.width = Math.round(newFmi) + "px";
+            })
+            modalFooter.appendChild(optButton);
+        }
+        forceAction(week + 1);
+    } else {
+        setTimeout(() => { console.log("check"); forceAction(week) }, 500);
+    }
+}
+
 ///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
 // Main() функционалност
 (function () {
-    
-    // Fetch forced notifications
-    // fetch("../scenarios/forced-notifications.json")
-    // .then(data => ) JSON.parse()
+
+    //initializes global variable forced actions
+    loadForcedActions();
+    //forceAction(0);
+
     parseBeginning(0);
     parseWeek(1);
 })();

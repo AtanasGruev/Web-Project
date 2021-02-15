@@ -85,17 +85,17 @@ body {
 }
 
 .bars .health-bar-real {
-    background-color: red;
+    background-color: #DC143C;
     width: 80%;
 }
 
 .bars .sleep-bar-real {
-    background-color: green;
+    background-color: #32CD32;
     width: 90%;
 }
 
 .bars .fmi-bar-real {
-    background-color: blue;
+    background-color: #1E90FF;
     width: 6%;
 }
 
