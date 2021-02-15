@@ -1,4 +1,6 @@
 <?php
+$configs = include('config.php');
+
 $health = isset($_POST['health']) ? $_POST['health'] : '';
 $fun = isset($_POST['fun']) ? $_POST['fun'] : '';
 $fmi = isset($_POST['fmi']) ? $_POST['fmi'] : '';
@@ -13,7 +15,7 @@ echo "in php script";
 echo $id;
 echo "health is ".$health;
 
-$conn = new PDO('mysql:host=localhost;dbname=webproj', 'register_user', 'passw0rd');
+$conn = new PDO('mysql:host='.$configs['host'].';dbname='.$configs['dbname'].'', $configs['username'], $configs['password']);
 
 
 $data = [

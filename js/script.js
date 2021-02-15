@@ -97,7 +97,7 @@ const limit = 1;
 
 // Прочита сценария и работи с него
 function parseBeginning(eventNumber) {
-    fetch("../scenarios/week-0.json")
+    fetch("../scenarios/" + scenario + "/week-0.json")
         .then(data => data.json())
         .then(result => loadWeek0Events(result, eventNumber))
 }
@@ -285,11 +285,11 @@ function parseWeek(weekNum) {
         }
     }
 
-    if (weekNum > 5) {
+    if (weekNum > weeksCount) {
         endGame("over");
     } else {
         notificationsSeenObj["notificationsSeen"] = [];
-        fetch("../scenarios/week-" + weekNum + "-activities.json")
+        fetch("../scenarios/" + scenario + "/week-" + weekNum + "-activities.json")
             .then(data => data.json())
             .then(result => activitiesWeek(result, weekNum))
     }
@@ -375,7 +375,7 @@ function activitiesWeek(result, weekNum) {
     }
 
     // Прочитаме notifications за седмицата и ги връзваме с бутоните, narrations и bars
-    fetch("../scenarios/week-" + weekNum + "-notifications.json")
+    fetch("../scenarios/" + scenario + "/week-" + weekNum + "-notifications.json")
         .then(data => data.json())
         .then(result => notificationsWeek(result))
 }
@@ -427,7 +427,6 @@ function endGame(reason) {
         case "over": message = "Засега толкова! Благодаря, че играхте в нашия ФМИ семестриален симулатор, надяваме се да ви е харесал! Ако искате да продължим разработването на играта и да добавим още сценарии (седмици, семестри). моля помислете да ни подкрепите финансово на нашият IBAN: BG18RZBB91550123456789."; break;
         case "fire": message = "Опитваш се да се измъкнеш, но пламъците са навсякъде... умираш в агония."; break;
         case "neck": message = "В бързината си се подхлъзваш на стълбите и политаш надолу. Падаш на главата си и си чупиш врата."; break;
-
     }
 
     modalBody.innerHTML = message;
@@ -629,11 +628,8 @@ function notificationsWeek(result) {
 
                                 optButton.addEventListener("click", function () {
 
-                                    // Unhappy endings (fire / neck)
-                                    if (counterActionsObj["counterActions"] >= 40 && i == 1 && action["eventNumber"] == 9) {
-                                         endGame("fire");
-                                    } else if (counterActionsObj["counterActions"] >= 40 && i == 0 && action["eventNumber"] == 8) {
-                                         endGame("neck");
+                                    if(action.hasOwnProperty("flag")) {
+                                         endGame(action.flag);
                                     } else {
 
                                         // Да изведем response на #narration
@@ -811,14 +807,13 @@ toggleMode.onclick = () => {
 }
 
 
-forcedNotificationAction = [9, 15, 27]
-var forcedActions;
-
-
 function loadForcedActions() {
-    fetch("../scenarios/forced-notifications.json")
+    fetch("../scenarios/" + scenario + "/forced-notifications.json")
         .then(data => data.json())
-        .then(result => { forcedActions = result; })
+        .then(result => { 
+            forcedActions = result.forcedActions; 
+            forcedNotificationAction = result.forcedNotificationAction;
+        })
 }
 
 function forceAction(week) {
@@ -896,16 +891,30 @@ function forceAction(week) {
     }
 }
 
+var forcedNotificationAction;
+var forcedActions;
+var scenario;
+var weeksCount;
+
+function loadConfig() {
+    fetch("../scenarios/config.json")
+        .then(data => data.json())
+        .then(result => { 
+            scenario = result.scenario;
+            weeksCount = result.weeksCount;
+            forcedNotificationAction = result.forcedNotificationAction;
+
+            loadForcedActions();
+            parseBeginning(0);
+            parseWeek(1);
+        })
+}
 ///------------------XXXXXXXXXXXXXXXXXX---------------------///
 
 // Main() функционалност
 (function () {
 
-    //initializes global variable forced actions
-    loadForcedActions();
-    //forceAction(0);
-
-    parseBeginning(0);
-    parseWeek(1);
+    loadConfig();
+    
 })();
 

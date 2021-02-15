@@ -1,10 +1,12 @@
 <?php
+$configs = include('config.php');
+
 $email = isset($_POST['email']) ? $_POST['email'] : '';
 $username = isset($_POST['username']) ? $_POST['username'] : '';
 $password = isset($_POST['password']) ? $_POST['password'] : '';
 $hashed_password = sha1($password);
 
-$conn = new PDO('mysql:host=localhost; port=3306; dbname=webproj', 'register_user', 'passw0rd');
+$conn = new PDO('mysql:host='.$configs['host'].';dbname='.$configs['dbname'].'', $configs['username'], $configs['password']);
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
 $stmt->bindParam(':email', $email, PDO::PARAM_STR);

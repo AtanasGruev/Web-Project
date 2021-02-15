@@ -1,4 +1,7 @@
-[
+{ 
+    "forcedNotificationAction" : [9, 15, 27],
+
+    "forcedActions":[
     {
         "eventHeader": "Дискотека!",
         "eventNumber": 0,
@@ -74,4 +77,4 @@
             }
         ]
     }
-]
+]}

@@ -1,7 +1,9 @@
 <?php
+$configs = include('config.php');
+
 $id = isset($_POST['id']) ? $_POST['id'] : '';
 
-$conn = new PDO('mysql:host=localhost;dbname=webproj', 'register_user', 'passw0rd');
+$conn = new PDO('mysql:host='.$configs['host'].';dbname='.$configs['dbname'].'', $configs['username'], $configs['password']);
 
 $stmt = $conn->prepare("SELECT health, fun, uni, actions FROM stats WHERE id = :id");
 $stmt->bindParam(':id', $id, PDO::PARAM_STR);
