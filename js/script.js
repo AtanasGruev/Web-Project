@@ -162,7 +162,6 @@ function activateWeek0Events(result, eventNumber) {
         document.getElementById("narration").style.visibility = "visible";
 
         counterActionsObj.counterActions = window.actions;
-        console.log(counterActionsObj.counterActions);
 
         forceAction(counterActionsObj.counterActions/10);
 
@@ -264,7 +263,6 @@ function ajax(url, settings) {
 
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
-        console.log(xhr.responseText);
     };
 
     xhr.open(settings.method || 'GET', url, /* async */ true);
@@ -280,7 +278,6 @@ function ajax(url, settings) {
 // Чете json файлове и вика подходящи функции
 function parseWeek(weekNum) {
 
-    //console.log(weekNum);
     if (weekNum > 1) {
         const interface = document.getElementById("locations-activities");
         while (interface.firstChild) {
@@ -427,9 +424,9 @@ function endGame(reason) {
         case "health": message = "Нездравословният ти начин на живот си каза думата - разви тумор на мозъка!"; break;
         case "fun": message = "Не може да се живее без забавление от време на време... Толкова си нещастен, че се самоубиваш!"; break;
         case "fmi": message = "Изпусна прекалено много материал... Няма никакъв шанс да успееш да наваксаш през сесията, тоя семестър е провал!"; break;
-        case "over": message = "Засега толкова! Благодаря, че играхте в нашия ФМИ семестриален симулатор, надяваме се да ви е харесал! Ако искате да продължим разработването на играта и да добавим още сценарии (седмици, семестри). моля помислете да ни подкрепите финансово на нашият IBAN: BG18RZBB91550123456789."
-        case "fire": message = "Опитваш се да се измъкнеш, но пламъците са навсякъде... умираш в агония."
-        case "neck": message = "В бързината си се подхлъзваш на стълбите и политаш надолу. Падаш на главата си и си чупиш врата."
+        case "over": message = "Засега толкова! Благодаря, че играхте в нашия ФМИ семестриален симулатор, надяваме се да ви е харесал! Ако искате да продължим разработването на играта и да добавим още сценарии (седмици, семестри). моля помислете да ни подкрепите финансово на нашият IBAN: BG18RZBB91550123456789."; break;
+        case "fire": message = "Опитваш се да се измъкнеш, но пламъците са навсякъде... умираш в агония."; break;
+        case "neck": message = "В бързината си се подхлъзваш на стълбите и политаш надолу. Падаш на главата си и си чупиш врата."; break;
 
     }
 
@@ -444,7 +441,6 @@ function endGame(reason) {
 
         //да ресетва, да трие от базата, да показва ли ранкиране?
         //засега просто затваря страницата
-        console.log("game over");
 
         window.open(window.location, '_self').top.close();
     });
@@ -633,64 +629,65 @@ function notificationsWeek(result) {
 
                                 optButton.addEventListener("click", function () {
 
-                                    // Unhappy ending (fire)
-                                    if (counterActionsObj["counterActions"] > 40 && i == 1 && randomNotification == 9) {
+                                    // Unhappy endings (fire / neck)
+                                    if (counterActionsObj["counterActions"] >= 40 && i == 1 && action["eventNumber"] == 9) {
                                          endGame("fire");
-                                    } else if (counterActionsObj["counterActions"] > 40 && i == 2 && randomNotification == 8) {
+                                    } else if (counterActionsObj["counterActions"] >= 40 && i == 0 && action["eventNumber"] == 8) {
                                          endGame("neck");
+                                    } else {
+
+                                        // Да изведем response на #narration
+                                        var messageDiv = document.createElement("div");
+                                        messageDiv.setAttribute("class", "narration-response");
+                                        messageDiv.innerHTML = action["options"][i]["response"];
+                                        narrationField.prepend(messageDiv);
+                                        closeModal(modal);
+
+                                        // Връзка с характеристиките от moodle полето
+                                        // Това е на ниво ИЗВЕСТИЯ!
+                                        var funStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["fun"];
+                                        var healthStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["health"];
+                                        var fmiStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["uni"];
+
+                                        // За здравето
+                                        var healthBar = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar")[0];
+                                        var healthBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar-real")[0];
+
+                                        // За социалния живот
+                                        var funBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("sleep-bar-real")[0];
+
+                                        // За университета
+                                        var fmiBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("fmi-bar-real")[0];
+
+                                        // Можем да осъществим самата промяна
+                                        // 100 процента считаме дължината на healthBar (примерно)
+                                        var maxWidth = healthBar.offsetWidth;
+                                        var widthPercent = maxWidth / 100;
+
+                                        var newHealth = healthBarReal.offsetWidth + healthStats * widthPercent;
+                                        if (Math.round(newHealth) > maxWidth - 8) newHealth = maxWidth - 8;
+                                        else if (Math.round(newHealth) <= 0) {
+                                            newHealth = 0;
+                                            endGame("health");
+                                        }// Имплементираме логика -- ГУБИТЕ ИГРАТА!    
+                                        healthBarReal.style.width = Math.round(newHealth) + "px";
+
+                                        var newFun = funBarReal.offsetWidth + funStats * widthPercent;
+                                        if (Math.round(newFun) > maxWidth - 8) newFun = maxWidth - 8;
+                                        else if (Math.round(newFun) <= 0) {
+                                            newFun = 0;
+                                            endGame("fun");
+                                        }// Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+                                        funBarReal.style.width = Math.round(newFun) + "px";
+
+                                        var newFmi = fmiBarReal.offsetWidth + fmiStats * widthPercent;
+                                        if (Math.round(newFmi) > maxWidth - 8) newFmi = maxWidth - 8;
+                                        else if (Math.round(newFmi) <= 0) {
+                                            newFmi = 0;
+                                            endGame("fmi");
+                                        } // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
+                                        fmiBarReal.style.width = Math.round(newFmi) + "px";
                                     }
-
-                                    // Да изведем response на #narration
-                                    var messageDiv = document.createElement("div");
-                                    messageDiv.setAttribute("class", "narration-response");
-                                    messageDiv.innerHTML = action["options"][i]["response"];
-                                    narrationField.prepend(messageDiv);
-                                    closeModal(modal);
-
-                                    // Връзка с характеристиките от moodle полето
-                                    // Това е на ниво ИЗВЕСТИЯ!
-                                    var funStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["fun"];
-                                    var healthStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["health"];
-                                    var fmiStats = result[location][activity][randomNotification]["options"][i]["statsChange"]["uni"];
-
-                                    // За здравето
-                                    var healthBar = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar")[0];
-                                    var healthBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("health-bar-real")[0];
-
-                                    // За социалния живот
-                                    var funBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("sleep-bar-real")[0];
-
-                                    // За университета
-                                    var fmiBarReal = document.getElementById("moodle-iframe").contentWindow.document.getElementsByClassName("fmi-bar-real")[0];
-
-                                    // Можем да осъществим самата промяна
-                                    // 100 процента считаме дължината на healthBar (примерно)
-                                    var maxWidth = healthBar.offsetWidth;
-                                    var widthPercent = maxWidth / 100;
-
-                                    var newHealth = healthBarReal.offsetWidth + healthStats * widthPercent;
-                                    if (Math.round(newHealth) > maxWidth - 8) newHealth = maxWidth - 8;
-                                    else if (Math.round(newHealth) <= 0) {
-                                        newHealth = 0;
-                                        endGame("health");
-                                    }// Имплементираме логика -- ГУБИТЕ ИГРАТА!    
-                                    healthBarReal.style.width = Math.round(newHealth) + "px";
-
-                                    var newFun = funBarReal.offsetWidth + funStats * widthPercent;
-                                    if (Math.round(newFun) > maxWidth - 8) newFun = maxWidth - 8;
-                                    else if (Math.round(newFun) <= 0) {
-                                        newFun = 0;
-                                        endGame("fun");
-                                    }// Имплементираме логика -- ГУБИТЕ ИГРАТА! 
-                                    funBarReal.style.width = Math.round(newFun) + "px";
-
-                                    var newFmi = fmiBarReal.offsetWidth + fmiStats * widthPercent;
-                                    if (Math.round(newFmi) > maxWidth - 8) newFmi = maxWidth - 8;
-                                    else if (Math.round(newFmi) <= 0) {
-                                        newFmi = 0;
-                                        endGame("fmi");
-                                    } // Имплементираме логика -- ГУБИТЕ ИГРАТА! 
-                                    fmiBarReal.style.width = Math.round(newFmi) + "px";
                                 })
                                 modalFooter.appendChild(optButton);
                             }
@@ -895,7 +892,7 @@ function forceAction(week) {
         }
         forceAction(week + 1);
     } else {
-        setTimeout(() => { console.log("check"); forceAction(week) }, 500);
+        setTimeout(() => { forceAction(week) }, 500);
     }
 }
 
